@@ -1,0 +1,65 @@
+{
+  "_from": "jingtum-lib@^1.2.9",
+  "_id": "jingtum-lib@1.2.9",
+  "_inBundle": false,
+  "_integrity": "sha512-sDcYsrSqUGM9zAcVMuoILBUvSx6qdYdWg37blVNYCji2aIdswMynM9Cr6HrOQXFelloPxckeUmblEs0rA0INLg==",
+  "_location": "/jingtum-lib",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "jingtum-lib@^1.2.9",
+    "name": "jingtum-lib",
+    "escapedName": "jingtum-lib",
+    "rawSpec": "^1.2.9",
+    "saveSpec": null,
+    "fetchSpec": "^1.2.9"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/jingtum-lib/-/jingtum-lib-1.2.9.tgz",
+  "_shasum": "4316eb7852a26c531e23b591c42c06dcfb5ae5fe",
+  "_spec": "jingtum-lib@^1.2.9",
+  "_where": "/Users/xdjiang/project/jcc_server/exchange_server",
+  "author": {
+    "name": "jingtum inc."
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "bignumber.js": "^5.0.0",
+    "extend": "^3.0.0",
+    "jingtum-base-lib": "^1.0.9",
+    "lodash": "^4.17.2",
+    "lru-cache": "^4.0.1",
+    "sha1": "^1.1.1",
+    "url": "^0.11.0",
+    "utf8": "^2.1.2",
+    "ws": "^1.1.1"
+  },
+  "deprecated": false,
+  "description": "jingtum lib",
+  "devDependencies": {
+    "chai": "^3.5.0"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "keywords": [
+    "jingtum",
+    "blockchain",
+    "lib"
+  ],
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "name": "jingtum-lib",
+  "repository": {
+    "type": "git",
+    "url": "http://git.jingtum.com/root/jingtum-lib.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.2.9"
+}
