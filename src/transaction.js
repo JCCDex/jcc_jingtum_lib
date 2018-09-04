@@ -9,7 +9,7 @@ const fee = require('./config').fee || 10000;
  * @param remote
  * @constructor
  */
-function Transaction(remote, filter) {
+function Transaction(remote, filter, base_wallet_currency) {
     Event.call(this);
 
     var self = this;
@@ -17,6 +17,7 @@ function Transaction(remote, filter) {
     self.tx_json = {Flags: 0, Fee: fee};
     self._filter = filter || function(v) {return v};
     self._secret = void(0);
+    this._base_wallet_currency = base_wallet_currency;
 }
 util.inherits(Transaction, Event);
 
@@ -277,6 +278,7 @@ Transaction.prototype.setFlags = function(flags) {
 Transaction.prototype.sign = function(callback) {
     const base = require('jingtum-base-lib').Wallet;
     var jser = require('../lib/Serializer').Serializer;
+    jser.init(this._base_wallet_currency);
     var Remote = require('./remote');
     var self = this;
     var remote = new Remote({server: self._remote._url});
