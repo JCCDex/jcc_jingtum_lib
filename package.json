@@ -1,0 +1,43 @@
+{
+  "dependencies": {
+    "bignumber.js": "^5.0.0",
+    "bn-plus.js": "^1.0.0",
+    "extend": "^3.0.0",
+    "jingtum-base-lib": "^1.0.9",
+    "lodash": "^4.17.2",
+    "lru-cache": "^4.0.1",
+    "sha1": "^1.1.1",
+    "url": "^0.11.0",
+    "utf8": "^2.1.2",
+    "ws": "^1.1.1"
+  },
+  "deprecated": false,
+  "description": "jingtum lib",
+  "devDependencies": {
+    "chai": "^3.5.0"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": [
+    "jingtum",
+    "blockchain",
+    "lib"
+  ],
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "name": "jcc_jingtum_lib",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JCCDex/jcc_jingtum_lib.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.4.1",
+  "author": "JCCDex",
+  "bugs": {
+    "url": "https://github.com/JCCDex/jcc_jingtum_lib/issues"
+  },
+  "homepage": "https://github.com/JCCDex/jcc_jingtum_lib#readme"
+}
