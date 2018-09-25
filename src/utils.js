@@ -2,12 +2,11 @@
  * Created by Administrator on 2016/11/20.
  */
 var extend = require('extend');
-var baselib = require('jingtum-base-lib').Wallet;
+var baselib = require('jcc_jingtum_base_lib').Wallet;
 var Transaction = require('./transaction');
 var _ = require('lodash');
 var utf8 = require('utf8');
-var config = require('./config');
-const currency = config.currency;
+var configs = require('./config');
 var bignumber = require('bignumber.js');
 
 // Flags for ledger entries
@@ -63,12 +62,28 @@ function stringToHex(s) {
     return result;
 }
 
+var getCurrency = function (token) {
+    var config = configs.find(function (conf) {
+        return conf.currency.toLowerCase() === token.toLowerCase();
+    })
+    var currency = config ? config.currency : 'SWT';
+    return currency;
+}
+
+var getFee = function (token) {
+    var config = configs.find(function (conf) {
+        return conf.currency.toLowerCase() === token.toLowerCase();
+    })
+    var fee = config ? config.fee : 'SWT';
+    return fee;
+}
+
 /**
  * check {value: '', currency:'', issuer: ''}
  * @param amount
  * @returns {boolean}
  */
-function isValidAmount(amount) {
+function isValidAmount(amount, token) {
     if (typeof amount !== 'object') {
         return false;
     }
@@ -81,13 +96,14 @@ function isValidAmount(amount) {
     if (!amount.currency || !isValidCurrency(amount.currency)) {
         return false;
     }
+    var currency = getCurrency(token);
     // native currency issuer is empty
     if (amount.currency === currency && amount.issuer !== '') {
         return false;
     }
     // non native currency issuer is not allowed to be empty
     if (amount.currency !== currency &&
-        !baselib.isValidAddress(amount.issuer)) {
+        !baselib.isValidAddress(amount.issuer, currency)) {
         return false;
     }
     return true;
@@ -98,7 +114,7 @@ function isValidAmount(amount) {
  * @param amount
  * @returns {boolean}
  */
-function isValidAmount0(amount) {
+function isValidAmount0(amount, token) {
     if (typeof amount !== 'object') {
         return false;
     }
@@ -106,13 +122,14 @@ function isValidAmount0(amount) {
     if (!amount.currency || !isValidCurrency(amount.currency)) {
         return false;
     }
+    var currency = getCurrency(token)
     // native currency issuer is empty
     if (amount.currency === currency && amount.issuer !== '') {
         return false;
     }
     // non native currency issuer is not allowed to be empty
     if (amount.currency !== currency &&
-        !baselib.isValidAddress(amount.issuer)) {
+        !baselib.isValidAddress(amount.issuer, currency)) {
         return false;
     }
     return true;
@@ -124,15 +141,16 @@ function isValidAmount0(amount) {
  * @param amount
  * @returns {*}
  */
-function parseAmount(amount) {
+function parseAmount(amount, token) {
     if (typeof amount === 'string' && Number(amount) !== NaN) {
+        var currency = getCurrency(token);
         var value = String(new bignumber(amount).dividedBy(1000000.0));
         return {
             value: value,
             currency: currency,
             issuer: ''
         };
-    } else if (typeof amount === 'object' && isValidAmount(amount)) {
+    } else if (typeof amount === 'object' && isValidAmount(amount, token)) {
         return amount;
     } else {
         return null;
@@ -248,11 +266,11 @@ function affectedAccounts(tx) {
  * @param tx
  * @returns {Array}
  */
-function affectedBooks(tx) {
+function affectedBooks(tx, token) {
     var data = tx.meta;
     if (typeof data !== 'object') return [];
     if (!Array.isArray(data.AffectedNodes)) return [];
-
+    var currency = getCurrency(token);
     var books = {};
     for (var i = 0; i < data.AffectedNodes.length; ++i) {
         var node = getTypeNode(data.AffectedNodes[i]);
@@ -260,8 +278,8 @@ function affectedBooks(tx) {
             continue;
         }
         var fields = extend({}, node.PreviousFields, node.NewFields, node.FinalFields);
-        var gets = parseAmount(fields.TakerGets);
-        var pays = parseAmount(fields.TakerPays);
+        var gets = parseAmount(fields.TakerGets, token);
+        var pays = parseAmount(fields.TakerPays, token);
         var getsKey = gets.currency === currency ? gets.currency : gets.currency + '/' + gets.issuer;
         var paysKey = pays.currency === currency ? pays.currency : pays.currency + '/' + pays.issuer;
         var key = getsKey + ':' + paysKey;
@@ -391,7 +409,7 @@ function formatArgs(args) {
  * @param txn
  * @param account
  */
-function processTx(txn, account) {
+function processTx(txn, account, token) {
     var tx = txn.tx || txn.transaction || txn,
         meta = txn.meta;
     // basic information
@@ -406,11 +424,11 @@ function processTx(txn, account) {
     switch (result.type) {
         case 'sent':
             result.counterparty = tx.Destination;
-            result.amount = parseAmount(tx.Amount);
+            result.amount = parseAmount(tx.Amount, token);
             break;
         case 'received':
             result.counterparty = tx.Account;
-            result.amount = parseAmount(tx.Amount);
+            result.amount = parseAmount(tx.Amount, token);
             break;
         case 'trusted':
             result.counterparty = tx.Account;
@@ -421,13 +439,13 @@ function processTx(txn, account) {
             result.amount = tx.LimitAmount;
             break;
         case 'convert':
-            result.spent = parseAmount(tx.SendMax);
-            result.amount = parseAmount(tx.Amount);
+            result.spent = parseAmount(tx.SendMax, token);
+            result.amount = parseAmount(tx.Amount, token);
             break;
         case 'offernew':
             result.offertype = tx.Flags & Transaction.flags.OfferCreate.Sell ? 'sell' : 'buy';
-            result.gets = parseAmount(tx.TakerGets);
-            result.pays = parseAmount(tx.TakerPays);
+            result.gets = parseAmount(tx.TakerGets, token);
+            result.pays = parseAmount(tx.TakerPays, token);
             result.seq = tx.Sequence;
             break;
         case 'offercancel':
@@ -437,13 +455,13 @@ function processTx(txn, account) {
             result.counterparty = account === tx.Target ? tx.Account : tx.Target;
             result.relationtype = tx.RelationType === 3 ? 'freeze' : 'authorize';
             result.isactive = account === tx.Target ? false : true;
-            result.amount = parseAmount(tx.LimitAmount);
+            result.amount = parseAmount(tx.LimitAmount, token);
             break;
         case 'relationdel':
             result.counterparty = account === tx.Target ? tx.Account : tx.Target;
             result.relationtype = tx.RelationType === 3 ? 'unfreeze' : 'unknown';
             result.isactive = account === tx.Target ? false : true;
-            result.amount = parseAmount(tx.LimitAmount);
+            result.amount = parseAmount(tx.LimitAmount, token);
             break;
         case 'configcontract':
             result.params = formatArgs(tx.Args);
@@ -496,7 +514,7 @@ function processTx(txn, account) {
             // current account offer
             if (node.fields.Account === account) {
                 // 1. offer_partially_funded
-                if (node.diffType === 'ModifiedNode' || (node.diffType === 'DeletedNode' && node.fieldsPrev.TakerGets && !isAmountZero(parseAmount(node.fieldsFinal.TakerGets)))) {
+                if (node.diffType === 'ModifiedNode' || (node.diffType === 'DeletedNode' && node.fieldsPrev.TakerGets && !isAmountZero(parseAmount(node.fieldsFinal.TakerGets, token)))) {
                     effect.effect = 'offer_partially_funded';
                     effect.counterparty = {
                         account: tx.Account,
@@ -505,14 +523,14 @@ function processTx(txn, account) {
                     };
                     if (node.diffType !== 'DeletedNode') {
                         // TODO no need partially funded must remains offers
-                        effect.remaining = !isAmountZero(parseAmount(node.fields.TakerGets));
+                        effect.remaining = !isAmountZero(parseAmount(node.fields.TakerGets, token));
                     } else {
                         effect.cancelled = true;
                     }
-                    effect.gets = parseAmount(fieldSet.TakerGets);
-                    effect.pays = parseAmount(fieldSet.TakerPays);
-                    effect.got = AmountSubtract(parseAmount(node.fieldsPrev.TakerPays), parseAmount(node.fields.TakerPays));
-                    effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets), parseAmount(node.fields.TakerGets));
+                    effect.gets = parseAmount(fieldSet.TakerGets, token);
+                    effect.pays = parseAmount(fieldSet.TakerPays, token);
+                    effect.got = AmountSubtract(parseAmount(node.fieldsPrev.TakerPays, token), parseAmount(node.fields.TakerPays, token));
+                    effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets, token), parseAmount(node.fields.TakerGets, token));
                     effect.type = sell ? 'sold' : 'bought';
                     if (node.fields.OfferFeeRateNum)
                         effect.rate = new bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
@@ -527,16 +545,16 @@ function processTx(txn, account) {
                             seq: tx.Sequence,
                             hash: tx.hash
                         };
-                        effect.got = AmountSubtract(parseAmount(node.fieldsPrev.TakerPays), parseAmount(node.fields.TakerPays));
-                        effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets), parseAmount(node.fields.TakerGets));
+                        effect.got = AmountSubtract(parseAmount(node.fieldsPrev.TakerPays, token), parseAmount(node.fields.TakerPays, token));
+                        effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets, token), parseAmount(node.fields.TakerGets, token));
                         effect.type = sell ? 'sold' : 'bought';
                         if (node.fields.OfferFeeRateNum)
                             effect.rate = new bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
                     }
                     // 3. offer_created
                     if (effect.effect === 'offer_created') {
-                        effect.gets = parseAmount(fieldSet.TakerGets);
-                        effect.pays = parseAmount(fieldSet.TakerPays);
+                        effect.gets = parseAmount(fieldSet.TakerGets, token);
+                        effect.pays = parseAmount(fieldSet.TakerPays, token);
                         effect.type = sell ? 'sell' : 'buy';
                     }
                     // 4. offer_cancelled
@@ -544,11 +562,11 @@ function processTx(txn, account) {
                         effect.hash = node.fields.PreviousTxnID;
                         // collect data for cancel transaction type
                         if (result.type === 'offercancel') {
-                            result.gets = parseAmount(fieldSet.TakerGets);
-                            result.pays = parseAmount(fieldSet.TakerPays);
+                            result.gets = parseAmount(fieldSet.TakerGets, token);
+                            result.pays = parseAmount(fieldSet.TakerPays, token);
                         }
-                        effect.gets = parseAmount(fieldSet.TakerGets);
-                        effect.pays = parseAmount(fieldSet.TakerPays);
+                        effect.gets = parseAmount(fieldSet.TakerGets, token);
+                        effect.pays = parseAmount(fieldSet.TakerPays, token);
                         effect.type = sell ? 'sell' : 'buy';
                     }
                 }
@@ -562,8 +580,8 @@ function processTx(txn, account) {
                     seq: node.fields.Sequence,
                     hash: node.PreviousTxnID || node.fields.PreviousTxnID
                 };
-                effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerPays), parseAmount(node.fields.TakerPays));
-                effect.got = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets), parseAmount(node.fields.TakerGets));
+                effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerPays, token), parseAmount(node.fields.TakerPays, token));
+                effect.got = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets, token), parseAmount(node.fields.TakerGets, token));
                 effect.type = sell ? 'bought' : 'sold';
             }
             // add price
@@ -625,8 +643,21 @@ function arraySet(count, value) {
     return a;
 }
 
-var ACCOUNT_ZERO = config.ACCOUNT_ZERO;
-var ACCOUNT_ONE = config.ACCOUNT_ONE;
+var ACCOUNT_ZERO = function (token) {
+    token = token || 'swt';
+    var config = configs.find(function (conf) {
+        return conf.currency.toLowerCase() === token.toLowerCase();
+    })
+    return config ? config.ACCOUNT_ZERO : '';
+};
+
+var ACCOUNT_ONE = function (token) {
+    token = token || 'swt';
+    var config = configs.find(function (conf) {
+        return conf.currency.toLowerCase() === token.toLowerCase();
+    })
+    return config ? config.ACCOUNT_ONE : '';
+};
 
 module.exports = {
     hexToString: hexToString,
@@ -644,5 +675,7 @@ module.exports = {
     LEDGER_STATES: LEDGER_STATES,
     ACCOUNT_ZERO: ACCOUNT_ZERO,
     ACCOUNT_ONE: ACCOUNT_ONE,
-    arraySet: arraySet
+    arraySet: arraySet,
+    getCurrency: getCurrency,
+    getFee: getFee
 };
