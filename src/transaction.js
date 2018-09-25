@@ -3,17 +3,18 @@ var util = require('util');
 var Event = require('events').EventEmitter;
 var utf8 = require('utf8');
 var utils = require('./utils');
-var baselib = require('jingtum-base-lib').Wallet;
-const fee = require('./config').fee || 10000;
+var baselib = require('jcc_jingtum_base_lib').Wallet;
 /**
  * Post request to server with account secret
  * @param remote
  * @constructor
  */
-function Transaction(remote, filter) {
+function Transaction(remote, filter, token) {
     Event.call(this);
 
     var self = this;
+    self._token = token || 'swt';
+    var fee = utils.getFee(self._token);
     self._remote = remote;
     self.tx_json = {
         Flags: 0,
@@ -116,7 +117,7 @@ Transaction.prototype.getTransactionType = function () {
  * @param secret
  */
 Transaction.prototype.setSecret = function (secret) {
-    if (!baselib.isValidSecret(secret)) {
+    if (!baselib.isValidSecret(secret, this._token)) {
         this.tx_json._secret = new Error('valid secret');
         return;
     }
@@ -203,13 +204,13 @@ Transaction.prototype.setDestinationTag = function(tag) {
 };
 */
 
-function MaxAmount(amount) {
+function MaxAmount(amount, token) {
     var utils = require('./utils');
     if (typeof amount === 'string' && Number(amount)) {
         var _amount = parseInt(Number(amount) * (1.0001));
         return String(_amount);
     }
-    if (typeof amount === 'object' && utils.isValidAmount(amount)) {
+    if (typeof amount === 'object' && utils.isValidAmount(amount, token)) {
         var _value = Number(amount.value) * (1.0001);
         amount.value = String(_value);
         return amount;
@@ -237,7 +238,7 @@ Transaction.prototype.setPath = function (key) {
         return;
     var path = JSON.parse(item.path);
     this.tx_json.Paths = path;
-    var amount = MaxAmount(item.choice);
+    var amount = MaxAmount(item.choice, this._token);
     this.tx_json.SendMax = amount;
 };
 
@@ -246,7 +247,7 @@ Transaction.prototype.setPath = function (key) {
  * @param amount
  */
 Transaction.prototype.setSendMax = function (amount) {
-    if (!utils.isValidAmount(amount)) {
+    if (!utils.isValidAmount(amount, this._token)) {
         return new Error('invalid send max amount');
     }
     this.tx_json.SendMax = amount;
@@ -297,7 +298,7 @@ Transaction.prototype.setSequence = function (sequence) {
 };
 
 function signing(self, callback) {
-    const base = require('jingtum-base-lib').Wallet;
+    const base = require('jcc_jingtum_base_lib').Wallet;
     var jser = require('../lib/Serializer').Serializer;
     self.tx_json.Fee = self.tx_json.Fee / 1000000;
 
@@ -323,12 +324,12 @@ function signing(self, callback) {
         self.tx_json.TakerGets = Number(self.tx_json.TakerGets) / 1000000;
     }
     try {
-        var wt = new base(self._secret);
+        var wt = new base(self._secret, self._token);
         self.tx_json.SigningPubKey = wt.getPublicKey();
         var prefix = 0x53545800;
-        var hash = jser.from_json(self.tx_json).hash(prefix);
+        var hash = jser.from_json(self.tx_json, self._token).hash(prefix, self._token);
         self.tx_json.TxnSignature = wt.signTx(hash);
-        self.tx_json.blob = jser.from_json(self.tx_json).to_hex();
+        self.tx_json.blob = jser.from_json(self.tx_json, self._token).to_hex();
         self._local_sign = true;
         callback(null, self.tx_json.blob);
     } catch (e) {
