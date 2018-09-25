@@ -11,7 +11,6 @@ var Transaction = require('./transaction');
 var OrderBook = require('./orderbook');
 var utils = require('./utils');
 var _ = require('lodash');
-const currency = require('./config').currency;
 var bignumber = require('bignumber.js');
 
 
@@ -46,6 +45,7 @@ function Remote(options) {
         ledger_index: 0
     };
     self._requests = {};
+    self._token = options.token || 'swt'
 
     self._cache = LRU({
         max: 100,
@@ -414,6 +414,7 @@ function getRelationType(type) {
 Remote.prototype.__requestAccount = function (type, options, request, filter) {
     // var request = new Request(this, type, filter);
     request._command = type;
+    var self = this
     var account = options.account;
     var ledger = options.ledger;
     var peer = options.peer;
@@ -424,7 +425,7 @@ Remote.prototype.__requestAccount = function (type, options, request, filter) {
     // }
     request.message.relation_type = getRelationType(options.type);
     if (account) {
-        if (!utils.isValidAddress(account)) {
+        if (!utils.isValidAddress(account, self._token)) {
             request.message.account = new Error('invalid account');
             return request;
         } else {
@@ -433,7 +434,7 @@ Remote.prototype.__requestAccount = function (type, options, request, filter) {
     }
     request.selectLedger(ledger);
 
-    if (utils.isValidAddress(peer)) {
+    if (utils.isValidAddress(peer, self._token)) {
         request.message.peer = peer;
     }
     if (Number(limit)) {
@@ -553,10 +554,11 @@ Remote.prototype.requestAccountOffers = function (options) {
  * @returns {Request}
  */
 Remote.prototype.requestAccountTx = function (options) {
+    var self = this
     var request = new Request(this, 'account_tx', function (data) {
         var results = [];
         for (var i = 0; i < data.transactions.length; ++i) {
-            var _tx = utils.processTx(data.transactions[i], options.account);
+            var _tx = utils.processTx(data.transactions[i], options.account, self._token);
             results.push(_tx);
         }
         data.transactions = results;
@@ -567,7 +569,7 @@ Remote.prototype.requestAccountTx = function (options) {
         request.message.type = new Error('invalid options type');
         return request;
     }
-    if (!utils.isValidAddress(options.account)) {
+    if (!utils.isValidAddress(options.account, this._token)) {
         request.message.account = new Error('account parameter is invalid');
         return request;
     }
@@ -618,12 +620,12 @@ Remote.prototype.requestOrderBook = function (options) {
         return request;
     }
     var taker_gets = options.taker_gets || options.pays;
-    if (!utils.isValidAmount0(taker_gets)) {
+    if (!utils.isValidAmount0(taker_gets, this._token)) {
         request.message.taker_gets = new Error('invalid taker gets amount');
         return request;
     }
     var taker_pays = options.taker_pays || options.gets;
-    if (!utils.isValidAmount0(taker_pays)) {
+    if (!utils.isValidAmount0(taker_pays, this._token)) {
         request.message.taker_pays = new Error('invalid taker pays amount');
         return request;
     }
@@ -652,7 +654,7 @@ Remote.prototype.requestBrokerage = function (options) {
     var issuer = options.issuer;
     var app = options.app;
     var currency = options.currency;
-    if (!utils.isValidAddress(issuer)) {
+    if (!utils.isValidAddress(issuer, this._token)) {
         request.message.account = new Error('issuer parameter is invalid');
         return request;
     }
@@ -696,7 +698,7 @@ Remote.prototype.requestPathFind = function (options) {
                 choice: item.source_amount
             });
             _result.push({
-                choice: utils.parseAmount(item.source_amount),
+                choice: utils.parseAmount(item.source_amount, self._token),
                 key: key
             });
         }
@@ -711,15 +713,15 @@ Remote.prototype.requestPathFind = function (options) {
     var dest = options.destination;
     var amount = options.amount;
 
-    if (!utils.isValidAddress(account)) {
+    if (!utils.isValidAddress(account, self._token)) {
         request.message.source_account = new Error('invalid source account');
         return request;
     }
-    if (!utils.isValidAddress(dest)) {
+    if (!utils.isValidAddress(dest, self._token)) {
         request.message.destination_account = new Error('invalid destination account');
         return request;
     }
-    if ((!utils.isValidAmount(amount))) {
+    if ((!utils.isValidAmount(amount, self._token))) {
         request.message.destination_amount = new Error('invalid amount');
         return request;
     }
@@ -727,7 +729,7 @@ Remote.prototype.requestPathFind = function (options) {
     request.message.subcommand = 'create';
     request.message.source_account = account;
     request.message.destination_account = dest;
-    request.message.destination_amount = ToAmount(amount);
+    request.message.destination_amount = ToAmount(amount, this._token);
     return request;
 };
 
@@ -778,10 +780,11 @@ Remote.prototype.createOrderBookStub = function () {
  * @param amount
  * @returns {Amount}
  */
-function ToAmount(amount) {
+function ToAmount(amount, token) {
     if (amount.value && Number(amount.value) > 100000000000) {
         return new Error('invalid amount: amount\'s maximum value is 100000000000');
     }
+    var currency = utils.getCurrency(token);
     if (amount.currency === currency) {
         // return new String(parseInt(Number(amount.value) * 1000000.00));
         return new String(parseInt(new bignumber(amount.value).mul(1000000.00)));
@@ -806,22 +809,22 @@ Remote.prototype.buildPaymentTx = function (options) {
     var src = options.source || options.from || options.account;
     var dst = options.destination || options.to;
     var amount = options.amount;
-    if (!utils.isValidAddress(src)) {
+    if (!utils.isValidAddress(src, this._token)) {
         tx.tx_json.src = new Error('invalid source address');
         return tx;
     }
-    if (!utils.isValidAddress(dst)) {
+    if (!utils.isValidAddress(dst, this._token)) {
         tx.tx_json.dst = new Error('invalid destination address');
         return tx;
     }
-    if (!utils.isValidAmount(amount)) {
+    if (!utils.isValidAmount(amount, this._token)) {
         tx.tx_json.amount = new Error('invalid amount');
         return tx;
     }
 
     tx.tx_json.TransactionType = 'Payment';
     tx.tx_json.Account = src;
-    tx.tx_json.Amount = ToAmount(amount);
+    tx.tx_json.Amount = ToAmount(amount, this._token);
     tx.tx_json.Destination = dst;
     return tx
 };
@@ -844,7 +847,7 @@ Remote.prototype.deployContractTx = function (options) {
     var amount = options.amount;
     var payload = options.payload;
     var params = options.params;
-    if (!utils.isValidAddress(account)) {
+    if (!utils.isValidAddress(account, this._token)) {
         tx.tx_json.account = new Error('invalid address');
         return tx;
     }
@@ -895,11 +898,11 @@ Remote.prototype.callContractTx = function (options) {
     var des = options.destination;
     var params = options.params;
     var foo = options.foo; //函数名
-    if (!utils.isValidAddress(account)) {
+    if (!utils.isValidAddress(account, this._token)) {
         tx.tx_json.account = new Error('invalid address');
         return tx;
     }
-    if (!utils.isValidAddress(des)) {
+    if (!utils.isValidAddress(des, this._token)) {
         tx.tx_json.des = new Error('invalid destination');
         return tx;
     }
@@ -967,7 +970,7 @@ Remote.prototype.buildBrokerageTx = function (options) {
     var den = options.den || options.denominator;
     var app = options.app;
     var amount = options.amount;
-    if (!utils.isValidAddress(account)) {
+    if (!utils.isValidAddress(account, this._token)) {
         tx.tx_json.src = new Error('invalid address');
         return tx;
     }
@@ -983,7 +986,7 @@ Remote.prototype.buildBrokerageTx = function (options) {
         tx.tx_json.app = new Error('invalid mol/den, molecule can not exceed denominator.');
         return tx;
     }
-    if (!utils.isValidAmount(amount)) {
+    if (!utils.isValidAmount(amount, this._token)) {
         tx.tx_json.amount = new Error('invalid amount');
         return tx;
     }
@@ -993,7 +996,7 @@ Remote.prototype.buildBrokerageTx = function (options) {
     tx.tx_json.OfferFeeRateNum = mol; //分子(正整数 + 0)
     tx.tx_json.OfferFeeRateDen = den; //分母(正整数)
     tx.tx_json.AppType = app; //应用来源(正整数)
-    tx.tx_json.Amount = ToAmount(amount); //币种,这里amount字段中的value值只是占位，没有实际意义。
+    tx.tx_json.Amount = ToAmount(amount, this._token); //币种,这里amount字段中的value值只是占位，没有实际意义。
 
     return tx;
 };
@@ -1009,11 +1012,11 @@ Remote.prototype.__buildTrustSet = function (options, tx) {
     var quality_out = options.quality_out;
     var quality_in = options.quality_in;
 
-    if (!utils.isValidAddress(src)) {
+    if (!utils.isValidAddress(src, this._token)) {
         tx.tx_json.src = new Error('invalid source address');
         return tx;
     }
-    if (!utils.isValidAmount(limit)) {
+    if (!utils.isValidAmount(limit, this._token)) {
         tx.tx_json.limit = new Error('invalid amount');
         return tx;
     }
@@ -1044,15 +1047,15 @@ Remote.prototype.__buildRelationSet = function (options, tx) {
     var des = options.target;
     var limit = options.limit;
 
-    if (!utils.isValidAddress(src)) {
+    if (!utils.isValidAddress(src, this._token)) {
         tx.tx_json.src = new Error('invalid source address');
         return tx;
     }
-    if (!utils.isValidAddress(des)) {
+    if (!utils.isValidAddress(des, this._token)) {
         tx.tx_json.des = new Error('invalid target address');
         return tx;
     }
-    if (!utils.isValidAmount(limit)) {
+    if (!utils.isValidAmount(limit, this._token)) {
         tx.tx_json.limit = new Error('invalid amount');
         return tx;
     }
@@ -1116,7 +1119,7 @@ Remote.prototype.__buildAccountSet = function (options, tx) {
     var src = options.source || options.from || options.account;
     var set_flag = options.set_flag || options.set;
     var clear_flag = options.clear_flag || options.clear;
-    if (!utils.isValidAddress(src)) {
+    if (!utils.isValidAddress(src, this._token)) {
         tx.tx_json.src = new Error('invalid source address');
         return tx;
     }
@@ -1159,11 +1162,11 @@ Remote.prototype.__buildDelegateKeySet = function (options, tx) {
     var src = options.source || options.account || options.from;
     var delegate_key = options.delegate_key;
 
-    if (!utils.isValidAddress(src)) {
+    if (!utils.isValidAddress(src, this._token)) {
         tx.tx_json.src = new Error('invalid source address');
         return tx;
     }
-    if (!utils.isValidAddress(delegate_key)) {
+    if (!utils.isValidAddress(delegate_key, this._token)) {
         tx.tx_json.delegate_key = new Error('invalid regular key address');
         return tx;
     }
@@ -1231,7 +1234,7 @@ Remote.prototype.buildOfferCreateTx = function (options) {
     var taker_pays = options.taker_pays || options.gets;
     var app = options.app;
 
-    if (!utils.isValidAddress(src)) {
+    if (!utils.isValidAddress(src, this._token)) {
         tx.tx_json.src = new Error('invalid source address');
         return tx;
     }
@@ -1244,7 +1247,7 @@ Remote.prototype.buildOfferCreateTx = function (options) {
         tx.tx_json.taker_gets2 = new Error('invalid to pays amount');
         return tx;
     }
-    if (typeof taker_gets === 'object' && !utils.isValidAmount(taker_gets)) {
+    if (typeof taker_gets === 'object' && !utils.isValidAmount(taker_gets, this._token)) {
         tx.tx_json.taker_gets2 = new Error('invalid to pays amount object');
         return tx;
     }
@@ -1252,7 +1255,7 @@ Remote.prototype.buildOfferCreateTx = function (options) {
         tx.tx_json.taker_pays2 = new Error('invalid to gets amount');
         return tx;
     }
-    if (typeof taker_pays === 'object' && !utils.isValidAmount(taker_pays)) {
+    if (typeof taker_pays === 'object' && !utils.isValidAmount(taker_pays, this._token)) {
         tx.tx_json.taker_pays2 = new Error('invalid to gets amount object');
         return tx;
     }
@@ -1265,8 +1268,8 @@ Remote.prototype.buildOfferCreateTx = function (options) {
     if (offer_type === 'Sell') tx.setFlags(offer_type);
     if (app) tx.tx_json.AppType = app;
     tx.tx_json.Account = src;
-    tx.tx_json.TakerPays = taker_pays2 ? taker_pays2 : ToAmount(taker_pays);
-    tx.tx_json.TakerGets = taker_gets2 ? taker_gets2 : ToAmount(taker_gets);
+    tx.tx_json.TakerPays = taker_pays2 ? taker_pays2 : ToAmount(taker_pays, this._token);
+    tx.tx_json.TakerGets = taker_gets2 ? taker_gets2 : ToAmount(taker_gets, this._token);
 
     return tx;
 };
@@ -1288,7 +1291,7 @@ Remote.prototype.buildOfferCancelTx = function (options) {
     var src = options.source || options.from || options.account;
     var sequence = options.sequence;
 
-    if (!utils.isValidAddress(src)) {
+    if (!utils.isValidAddress(src, this._token)) {
         tx.tx_json.src = new Error('invalid source address');
         return tx;
     }
