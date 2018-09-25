@@ -6,8 +6,7 @@ var Transaction = require('./src/transaction');
 var Account = require('./src/account');
 var OrderBook = require('./src/orderbook');
 var utils = require('./src/utils');
-var Wallet = require('jingtum-base-lib').Wallet;
-
+var Wallet = require('jcc_jingtum_base_lib').Wallet;
 
 exports.Remote = Remote;
 exports.Request = Request;
@@ -16,5 +15,3 @@ exports.Account = Account;
 exports.OrderBook = OrderBook;
 exports.utils = utils;
 exports.Wallet = Wallet;
-
-
