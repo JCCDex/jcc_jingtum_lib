@@ -4,11 +4,11 @@
 var util = require('util');
 var Event = require('events').EventEmitter;
 var utils = require('./utils');
-const currency = require('./config').currency;
 
-function parseKey(key) {
+function parseKey(key, token) {
     var parts = key.split(':');
     if (parts.length !== 2) return null;
+    var currency = utils.getCurrency(token);
 
     function parsePart(part) {
         if (part === currency) return {
@@ -18,7 +18,7 @@ function parseKey(key) {
         var _parts = part.split('/');
         if (_parts.length !== 2) return null;
         if (!utils.isValidCurrency(_parts[0])) return null;
-        if (!utils.isValidAddress(_parts[1])) return null;
+        if (!utils.isValidAddress(_parts[1], currency)) return null;
         return {
             currency: _parts[0],
             issuer: _parts[1]
@@ -49,10 +49,11 @@ function OrderBook(remote) {
     var self = this;
     self._remote = remote;
     self._books = {};
+    self._token = remote._token || 'swt';
 
     self.on('newListener', function (key, listener) {
         if (key === 'removeListener') return;
-        var pair = parseKey(key);
+        var pair = parseKey(key, self._token);
         if (!pair) {
             self.pair = new Error("invalid key");
             return self;
@@ -60,7 +61,7 @@ function OrderBook(remote) {
         self._books[key] = listener;
     });
     self.on('removeListener', function (key) {
-        var pair = parseKey(key);
+        var pair = parseKey(key, self._token);
         if (!pair) {
             self.pair = new Error("invalid key");
             return self;
@@ -75,7 +76,7 @@ OrderBook.prototype.__updateBooks = function (data) {
     var self = this;
     // dispatch
     if (data.meta) {
-        var books = utils.affectedBooks(data);
+        var books = utils.affectedBooks(data, self._token);
         var _data = {
             tx: data.transaction,
             meta: data.meta,
@@ -86,7 +87,7 @@ OrderBook.prototype.__updateBooks = function (data) {
             ledger_index: data.ledger_index,
             validated: data.validated
         };
-        var _tx = utils.processTx(_data, data.transaction.Account);
+        var _tx = utils.processTx(_data, data.transaction.Account, self._token);
         for (var i in books) {
             var callback = self._books[books[i]];
             if (callback) callback(_tx);
