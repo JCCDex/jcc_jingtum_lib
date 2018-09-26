@@ -11,9 +11,7 @@ var Transaction = require('./transaction');
 var OrderBook = require('./orderbook');
 var utils = require('./utils');
 var _ = require('lodash');
-var bignumber = require('bignumber.js');
-
-var LEDGER_OPTIONS = ['closed', 'header', 'current'];
+var Bignumber = require('bignumber.js');
 
 /**
  * main handler for backend system
@@ -590,7 +588,7 @@ Remote.prototype.requestAccountTx = function (options) {
         request.message.offset = Number(options.offset);
     }
     if (typeof (options.marker) === 'object' &&
-        Number(options.marker.ledger) !== NaN && Number(options.marker.seq) !== NaN) {
+        !Number.isNaN(Number(options.marker.ledger)) && !Number.isNaN(Number(options.marker.seq))) {
         request.message.marker = options.marker;
     }
     if (options.forward && typeof options.forward === 'boolean') { // true 正向；false反向
@@ -785,7 +783,7 @@ function ToAmount(amount, token) {
     var currency = utils.getCurrency(token);
     if (amount.currency === currency) {
         // return new String(parseInt(Number(amount.value) * 1000000.00));
-        return new String(parseInt(new bignumber(amount.value).mul(1000000.00)));
+        return String(parseInt(new Bignumber(amount.value).mul(1000000.00)));
     }
     return amount;
 }
@@ -1021,7 +1019,7 @@ Remote.prototype.__buildTrustSet = function (options, tx) {
 
     tx.tx_json.TransactionType = 'TrustSet';
     tx.tx_json.Account = src;
-    if (limit !== void(0)) {
+    if (limit !== void 0) {
         tx.tx_json.LimitAmount = limit;
     }
     if (quality_in) {
@@ -1062,7 +1060,7 @@ Remote.prototype.__buildRelationSet = function (options, tx) {
     tx.tx_json.Account = src;
     tx.tx_json.Target = des;
     tx.tx_json.RelationType = options.type === 'authorize' ? 1 : 3;
-    if (limit !== void(0)) {
+    if (limit !== void 0) {
         tx.tx_json.LimitAmount = limit;
     }
     return tx;
@@ -1128,8 +1126,7 @@ Remote.prototype.__buildAccountSet = function (options, tx) {
     var SetClearFlags = Transaction.set_clear_flags.AccountSet;
 
     function prepareFlag(flag) {
-        return (typeof flag === 'number') ?
-            flag : (SetClearFlags[flag] || SetClearFlags['asf' + flag]);
+        return (typeof flag === 'number') ? flag : (SetClearFlags[flag] || SetClearFlags['asf' + flag]);
     }
 
     if (set_flag && (set_flag = prepareFlag(set_flag))) {
