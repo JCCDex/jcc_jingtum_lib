@@ -4,6 +4,7 @@
     "bn-plus.js": "^1.0.0",
     "extend": "^3.0.0",
     "jcc_jingtum_base_lib": "^1.0.9",
+    "jsbn": "^1.1.0",
     "lodash": "^4.17.2",
     "lru-cache": "^4.0.1",
     "sha1": "^1.1.1",
