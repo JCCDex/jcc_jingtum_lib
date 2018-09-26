@@ -4,6 +4,7 @@ var Event = require('events').EventEmitter;
 var utf8 = require('utf8');
 var utils = require('./utils');
 var baselib = require('jcc_jingtum_base_lib').Wallet;
+var jser = require('../lib/Serializer').Serializer;
 /**
  * Post request to server with account secret
  * @param remote
@@ -297,8 +298,6 @@ Transaction.prototype.setSequence = function (sequence) {
 };
 
 function signing(self, callback) {
-    const base = require('jcc_jingtum_base_lib').Wallet;
-    var jser = require('../lib/Serializer').Serializer;
     self.tx_json.Fee = self.tx_json.Fee / 1000000;
 
     //payment
@@ -323,7 +322,7 @@ function signing(self, callback) {
         self.tx_json.TakerGets = Number(self.tx_json.TakerGets) / 1000000;
     }
     try {
-        var wt = new base(self._secret, self._token);
+        var wt = new baselib(self._secret, self._token);
         self.tx_json.SigningPubKey = wt.getPublicKey();
         var prefix = 0x53545800;
         var hash = jser.from_json(self.tx_json, self._token).hash(prefix, self._token);
