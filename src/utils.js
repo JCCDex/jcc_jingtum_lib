@@ -339,7 +339,6 @@ function txnType(tx, account) {
     } else {
         return 'offereffect';
     }
-
 }
 
 /**
@@ -403,10 +402,11 @@ function getPrice(effect, funded) {
 
 function formatArgs(args) {
     var newArgs = [];
-    if (args)
+    if (args) {
         for (var i = 0; i < args.length; i++) {
             newArgs.push(hexToString(args[i].Arg.Parameter));
         }
+    }
     return newArgs;
 }
 /**
@@ -418,8 +418,9 @@ function formatArgs(args) {
  * @param account
  */
 function processTx(txn, account, token) {
-    var tx = txn.tx || txn.transaction || txn,
-        meta = txn.meta;
+    var tx = txn.tx || txn.transaction || txn;
+
+    var meta = txn.meta;
     // basic information
     var result = {};
     result.date = (tx.date || tx.Timestamp) + 0x386D4380; // unix time
@@ -462,13 +463,13 @@ function processTx(txn, account, token) {
         case 'relationset':
             result.counterparty = account === tx.Target ? tx.Account : tx.Target;
             result.relationtype = tx.RelationType === 3 ? 'freeze' : 'authorize';
-            result.isactive = account === tx.Target ? false : true;
+            result.isactive = account !== tx.Target;
             result.amount = parseAmount(tx.LimitAmount, token);
             break;
         case 'relationdel':
             result.counterparty = account === tx.Target ? tx.Account : tx.Target;
             result.relationtype = tx.RelationType === 3 ? 'unfreeze' : 'unknown';
-            result.isactive = account === tx.Target ? false : true;
+            result.isactive = account !== tx.Target;
             result.amount = parseAmount(tx.LimitAmount, token);
             break;
         case 'configcontract':
@@ -496,7 +497,6 @@ function processTx(txn, account, token) {
                     // TODO to unify to utf8
                     memo[property] = memo[property];
                 }
-
             }
             result.memos.push(memo);
         }
@@ -540,8 +540,9 @@ function processTx(txn, account, token) {
                     effect.got = AmountSubtract(parseAmount(node.fieldsPrev.TakerPays, token), parseAmount(node.fields.TakerPays, token));
                     effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets, token), parseAmount(node.fields.TakerGets, token));
                     effect.type = sell ? 'sold' : 'bought';
-                    if (node.fields.OfferFeeRateNum)
+                    if (node.fields.OfferFeeRateNum) {
                         effect.rate = new bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
+                    }
                 } else {
                     // offer_funded, offer_created or offer_cancelled offer effect
                     effect.effect = node.diffType === 'CreatedNode' ? 'offer_created' : node.fieldsPrev.TakerPays ? 'offer_funded' : 'offer_cancelled';
@@ -556,8 +557,9 @@ function processTx(txn, account, token) {
                         effect.got = AmountSubtract(parseAmount(node.fieldsPrev.TakerPays, token), parseAmount(node.fields.TakerPays, token));
                         effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets, token), parseAmount(node.fields.TakerGets, token));
                         effect.type = sell ? 'sold' : 'bought';
-                        if (node.fields.OfferFeeRateNum)
+                        if (node.fields.OfferFeeRateNum) {
                             effect.rate = new bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
+                        }
                     }
                     // 3. offer_created
                     if (effect.effect === 'offer_created') {

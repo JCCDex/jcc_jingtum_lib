@@ -20,7 +20,7 @@ function Server(remote, opts) {
         opts = {
             host: parsed.hostname,
             port: parsed.port,
-            secure: (parsed.protocol === 'wss:') ? true : false
+            secure: parsed.protocol === 'wss:'
         }
     }
     if (typeof opts !== 'object') {

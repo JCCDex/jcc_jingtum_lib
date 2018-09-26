@@ -11,5 +11,4 @@ function jingtum_sign_tx(in_tx, in_v, token) {
     return jser.from_json(in_tx, token).to_hex();
 }
 
-
 module.exports = jingtum_sign_tx;
