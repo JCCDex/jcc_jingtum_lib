@@ -205,7 +205,6 @@ Transaction.prototype.setDestinationTag = function(tag) {
 */
 
 function MaxAmount(amount, token) {
-    var utils = require('./utils');
     if (typeof amount === 'string' && Number(amount)) {
         var _amount = parseInt(Number(amount) * (1.0001));
         return String(_amount);

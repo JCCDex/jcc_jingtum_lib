@@ -3,7 +3,6 @@
  */
 var extend = require('extend');
 var baselib = require('jcc_jingtum_base_lib').Wallet;
-var Transaction = require('./transaction');
 var _ = require('lodash');
 var utf8 = require('utf8');
 var configs = require('./config');
@@ -36,6 +35,15 @@ var LEDGER_FLAGS = {
         HighNoSkywell: 0x00200000
     }
 };
+
+var Flags = {
+    OfferCreate: {
+        Passive: 0x00010000,
+        ImmediateOrCancel: 0x00020000,
+        FillOrKill: 0x00040000,
+        Sell: 0x00080000
+    }
+}
 
 function hexToString(h) {
     var a = [];
@@ -443,7 +451,7 @@ function processTx(txn, account, token) {
             result.amount = parseAmount(tx.Amount, token);
             break;
         case 'offernew':
-            result.offertype = tx.Flags & Transaction.flags.OfferCreate.Sell ? 'sell' : 'buy';
+            result.offertype = tx.Flags & Flags.OfferCreate.Sell ? 'sell' : 'buy';
             result.gets = parseAmount(tx.TakerGets, token);
             result.pays = parseAmount(tx.TakerPays, token);
             result.seq = tx.Sequence;
