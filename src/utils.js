@@ -2,11 +2,11 @@
  * Created by Administrator on 2016/11/20.
  */
 var extend = require('extend');
-var baselib = require('jcc_jingtum_base_lib').Wallet;
+var Wallet = require('jcc_jingtum_base_lib').Wallet;
 var _ = require('lodash');
 var utf8 = require('utf8');
 var configs = require('./config');
-var bignumber = require('bignumber.js');
+var Bignumber = require('bignumber.js');
 
 // Flags for ledger entries
 var LEDGER_FLAGS = {
@@ -96,8 +96,7 @@ function isValidAmount(amount, token) {
         return false;
     }
     // check amount value
-    if ((!amount.value && amount.value !== 0) ||
-        Number(amount.value) === NaN) {
+    if ((!amount.value && amount.value !== 0) || Number.isNaN(Number(amount.value))) {
         return false;
     }
     // check amount currency
@@ -111,7 +110,7 @@ function isValidAmount(amount, token) {
     }
     // non native currency issuer is not allowed to be empty
     if (amount.currency !== currency &&
-        !baselib.isValidAddress(amount.issuer, currency)) {
+        !Wallet.isValidAddress(amount.issuer, currency)) {
         return false;
     }
     return true;
@@ -137,7 +136,7 @@ function isValidAmount0(amount, token) {
     }
     // non native currency issuer is not allowed to be empty
     if (amount.currency !== currency &&
-        !baselib.isValidAddress(amount.issuer, currency)) {
+        !Wallet.isValidAddress(amount.issuer, currency)) {
         return false;
     }
     return true;
@@ -150,9 +149,9 @@ function isValidAmount0(amount, token) {
  * @returns {*}
  */
 function parseAmount(amount, token) {
-    if (typeof amount === 'string' && Number(amount) !== NaN) {
+    if (typeof amount === 'string' && !Number.isNaN(Number(amount))) {
         var currency = getCurrency(token);
-        var value = String(new bignumber(amount).dividedBy(1000000.0));
+        var value = String(new Bignumber(amount).dividedBy(1000000.0));
         return {
             value: value,
             currency: currency,
@@ -315,8 +314,7 @@ function txnType(tx, account) {
         (tx.LimitAmount && tx.LimitAmount.issuer === account)) {
         switch (tx.TransactionType) {
             case 'Payment':
-                return tx.Account === account ?
-                    tx.Destination === account ? 'convert' : 'sent' : 'received';
+                return tx.Account === account ? tx.Destination === account ? 'convert' : 'sent' : 'received';
             case 'OfferCreate':
                 return 'offernew';
             case 'OfferCancel':
@@ -363,7 +361,7 @@ function isAmountZero(amount) {
 function AmountNegate(amount) {
     if (!amount) return amount;
     return {
-        value: String(-new bignumber(amount.value)),
+        value: String(-new Bignumber(amount.value)),
         currency: amount.currency,
         issuer: amount.issuer
     };
@@ -374,7 +372,7 @@ function AmountAdd(amount1, amount2) {
     if (!amount2) return amount1;
     if (amount1 && amount2) {
         return {
-            value: String(new bignumber(amount1.value).plus(amount2.value)),
+            value: String(new Bignumber(amount1.value).plus(amount2.value)),
             currency: amount1.currency,
             issuer: amount1.issuer
         };
@@ -387,7 +385,7 @@ function AmountSubtract(amount1, amount2) {
 }
 
 function AmountRatio(amount1, amount2) {
-    return String(new bignumber(amount1.value).dividedBy(amount2.value));
+    return String(new Bignumber(amount1.value).dividedBy(amount2.value));
 }
 
 function getPrice(effect, funded) {
@@ -495,7 +493,7 @@ function processTx(txn, account, token) {
                     memo[property] = utf8.decode(hexToString(memo[property]));
                 } catch (e) {
                     // TODO to unify to utf8
-                    memo[property] = memo[property];
+                    // memo[property] = memo[property];
                 }
             }
             result.memos.push(memo);
@@ -541,7 +539,7 @@ function processTx(txn, account, token) {
                     effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets, token), parseAmount(node.fields.TakerGets, token));
                     effect.type = sell ? 'sold' : 'bought';
                     if (node.fields.OfferFeeRateNum) {
-                        effect.rate = new bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
+                        effect.rate = new Bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
                     }
                 } else {
                     // offer_funded, offer_created or offer_cancelled offer effect
@@ -558,7 +556,7 @@ function processTx(txn, account, token) {
                         effect.paid = AmountSubtract(parseAmount(node.fieldsPrev.TakerGets, token), parseAmount(node.fields.TakerGets, token));
                         effect.type = sell ? 'sold' : 'bought';
                         if (node.fields.OfferFeeRateNum) {
-                            effect.rate = new bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
+                            effect.rate = new Bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
                         }
                     }
                     // 3. offer_created
@@ -581,9 +579,8 @@ function processTx(txn, account, token) {
                     }
                 }
                 effect.seq = node.fields.Sequence;
-            }
-            // 5. offer_bought
-            else if (tx.Account === account && !_.isEmpty(node.fieldsPrev)) {
+            } else if (tx.Account === account && !_.isEmpty(node.fieldsPrev)) {
+                // 5. offer_bought
                 effect.effect = 'offer_bought';
                 effect.counterparty = {
                     account: node.fields.Account,
@@ -613,7 +610,7 @@ function processTx(txn, account, token) {
             }
         }
         if (node.entryType === 'Brokerage') {
-            result.rate = new bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
+            result.rate = new Bignumber(parseInt(node.fields.OfferFeeRateNum, 16)).div(parseInt(node.fields.OfferFeeRateDen, 16)).toNumber();
         }
 
         // add effect
@@ -677,8 +674,8 @@ module.exports = {
     parseAmount: parseAmount,
     isValidCurrency: isValidCurrency,
     isValidHash: isValidHash,
-    isValidAddress: baselib.isValidAddress,
-    isValidSecret: baselib.isValidSecret,
+    isValidAddress: Wallet.isValidAddress,
+    isValidSecret: Wallet.isValidSecret,
     affectedAccounts: affectedAccounts,
     affectedBooks: affectedBooks,
     processTx: processTx,
