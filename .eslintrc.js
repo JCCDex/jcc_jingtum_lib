@@ -13,6 +13,7 @@ module.exports = {
     // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
     extends: 'standard',
     'rules': {
+        'standard/no-callback-literal': [0, ["cb", "callback"]],
         'space-before-function-paren': 0,
         'no-useless-constructor': 0,
         'arrow-parens': 0,
