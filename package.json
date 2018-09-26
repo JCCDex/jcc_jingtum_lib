@@ -14,6 +14,7 @@
   "deprecated": false,
   "description": "jingtum lib",
   "devDependencies": {
+    "babel-runtime": "^6.26.0",
     "chai": "^3.5.0"
   },
   "directories": {
