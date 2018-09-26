@@ -3,7 +3,7 @@ var util = require('util');
 var Event = require('events').EventEmitter;
 var utf8 = require('utf8');
 var utils = require('./utils');
-var baselib = require('jcc_jingtum_base_lib').Wallet;
+var Wallet = require('jcc_jingtum_base_lib').Wallet;
 var jser = require('../lib/Serializer').Serializer;
 /**
  * Post request to server with account secret
@@ -24,7 +24,7 @@ function Transaction(remote, filter, token) {
     self._filter = filter || function (v) {
         return v
     };
-    self._secret = void(0);
+    self._secret = void 0;
 }
 util.inherits(Transaction, Event);
 
@@ -117,7 +117,7 @@ Transaction.prototype.getTransactionType = function () {
  * @param secret
  */
 Transaction.prototype.setSecret = function (secret) {
-    if (!baselib.isValidSecret(secret, this._token)) {
+    if (!Wallet.isValidSecret(secret, this._token)) {
         this.tx_json._secret = new Error('valid secret');
         return;
     }
@@ -232,8 +232,7 @@ Transaction.prototype.setPath = function (key) {
     if (!item) {
         return new Error('non exists path key');
     }
-    if (item.path === '[]') // 沒有支付路径，不需要传下面的参数
-    {
+    if (item.path === '[]') { // 沒有支付路径，不需要传下面的参数
         return;
     }
     var path = JSON.parse(item.path);
@@ -270,7 +269,7 @@ Transaction.prototype.setTransferRate = function (rate) {
  *
  */
 Transaction.prototype.setFlags = function (flags) {
-    if (flags === void(0)) return;
+    if (flags === void 0) return;
 
     if (typeof flags === 'number') {
         this.tx_json.Flags = flags;
@@ -321,7 +320,7 @@ function signing(self, callback) {
         self.tx_json.TakerGets = Number(self.tx_json.TakerGets) / 1000000;
     }
     try {
-        var wt = new baselib(self._secret, self._token);
+        var wt = new Wallet(self._secret, self._token);
         self.tx_json.SigningPubKey = wt.getPublicKey();
         var prefix = 0x53545800;
         var hash = jser.from_json(self.tx_json, self._token).hash(prefix, self._token);
