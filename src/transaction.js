@@ -82,7 +82,6 @@ Transaction.flags = {
     }
 };
 
-
 Transaction.OfferTypes = ['Sell', 'Buy'];
 Transaction.RelationTypes = ['trust', 'authorize', 'freeze', 'unfreeze'];
 Transaction.AccountSetTypes = ['property', 'delegate', 'signer'];
@@ -183,7 +182,6 @@ Transaction.prototype.setFee = function (fee) {
     this.tx_json.Fee = _fee;
 };
 
-
 /**
  * set source tag
  * source tag is a 32 bit integer or undefined
@@ -234,8 +232,10 @@ Transaction.prototype.setPath = function (key) {
     if (!item) {
         return new Error('non exists path key');
     }
-    if (item.path === '[]') //沒有支付路径，不需要传下面的参数
+    if (item.path === '[]') // 沒有支付路径，不需要传下面的参数
+    {
         return;
+    }
     var path = JSON.parse(item.path);
     this.tx_json.Paths = path;
     var amount = MaxAmount(item.choice, this._token);
@@ -265,7 +265,6 @@ Transaction.prototype.setTransferRate = function (rate) {
     this.tx_json.TransferRate = (rate + 1) * 1e9;
 };
 
-
 /**
  * set transaction flags
  *
@@ -289,7 +288,7 @@ Transaction.prototype.setFlags = function (flags) {
 
 /* set sequence */
 Transaction.prototype.setSequence = function (sequence) {
-    if (!/^\+?[1-9][0-9]*$/.test(sequence)) { //正整数
+    if (!/^\+?[1-9][0-9]*$/.test(sequence)) { // 正整数
         this.tx_json.Sequence = new TypeError('invalid sequence');
         return this;
     }
@@ -300,8 +299,8 @@ Transaction.prototype.setSequence = function (sequence) {
 function signing(self, callback) {
     self.tx_json.Fee = self.tx_json.Fee / 1000000;
 
-    //payment
-    if (self.tx_json.Amount && JSON.stringify(self.tx_json.Amount).indexOf('{') < 0) { //基础货币
+    // payment
+    if (self.tx_json.Amount && JSON.stringify(self.tx_json.Amount).indexOf('{') < 0) { // 基础货币
         self.tx_json.Amount = Number(self.tx_json.Amount) / 1000000;
     }
     if (self.tx_json.Memos) {
@@ -314,11 +313,11 @@ function signing(self, callback) {
         self.tx_json.SendMax = Number(self.tx_json.SendMax) / 1000000;
     }
 
-    //order
-    if (self.tx_json.TakerPays && JSON.stringify(self.tx_json.TakerPays).indexOf('{') < 0) { //基础货币
+    // order
+    if (self.tx_json.TakerPays && JSON.stringify(self.tx_json.TakerPays).indexOf('{') < 0) { // 基础货币
         self.tx_json.TakerPays = Number(self.tx_json.TakerPays) / 1000000;
     }
-    if (self.tx_json.TakerGets && JSON.stringify(self.tx_json.TakerGets).indexOf('{') < 0) { //基础货币
+    if (self.tx_json.TakerGets && JSON.stringify(self.tx_json.TakerGets).indexOf('{') < 0) { // 基础货币
         self.tx_json.TakerGets = Number(self.tx_json.TakerGets) / 1000000;
     }
     try {
@@ -367,12 +366,12 @@ Transaction.prototype.submit = function (callback) {
     }
 
     var data = {};
-    if (self.tx_json.TransactionType === 'Signer') { //直接将blob传给底层
+    if (self.tx_json.TransactionType === 'Signer') { // 直接将blob传给底层
         data = {
             tx_blob: self.tx_json.blob
         };
         self._remote._submit('submit', data, self._filter, callback);
-    } else if (self._remote._local_sign) { //签名之后传给底层
+    } else if (self._remote._local_sign) { // 签名之后传给底层
         self.sign(function (err, blob) {
             if (err) {
                 return callback('sign error: ' + err);
@@ -383,7 +382,7 @@ Transaction.prototype.submit = function (callback) {
                 self._remote._submit('submit', data, self._filter, callback);
             }
         });
-    } else { //不签名交易传给底层
+    } else { // 不签名交易传给底层
         data = {
             secret: self._secret,
             tx_json: self.tx_json

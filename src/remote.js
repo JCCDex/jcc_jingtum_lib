@@ -13,7 +13,6 @@ var utils = require('./utils');
 var _ = require('lodash');
 var bignumber = require('bignumber.js');
 
-
 var LEDGER_OPTIONS = ['closed', 'header', 'current'];
 
 /**
@@ -299,7 +298,7 @@ Remote.prototype.requestLedgerClosed = function () {
         return {
             // fee_base: data.fee_base,
             ledger_hash: data.ledger_hash,
-            ledger_index: data.ledger_index,
+            ledger_index: data.ledger_index
             // reserve_base: data.reserve_base,
             // reserve_inc: data.reserve_base,
             // txn_count: data.txn_count,
@@ -372,7 +371,7 @@ Remote.prototype.requestLedger = function (options) {
  * for tx command
  * @param options
  * options: {
- *   hash: tx hash, string  
+ *   hash: tx hash, string
  * }
  * @returns {Request}
  */
@@ -401,7 +400,6 @@ function getRelationType(type) {
             return 1;
         case 'freeze':
             return 3;
-
     }
 }
 /**
@@ -471,10 +469,10 @@ Remote.prototype.requestAccountInfo = function (options) {
  * account tums
  * return account supports currency, including
  *     send currency and receive currency
- * @param 
+ * @param
  *    account(required): the query account
  *    ledger(option): specify ledger, ledger can be:
- *    ledger_index=xxx, ledger_hash=xxx, or ledger=closed|current|validated 
+ *    ledger_index=xxx, ledger_hash=xxx, or ledger=closed|current|validated
  *    no limit
  * @returns {Request}
  */
@@ -494,7 +492,7 @@ Remote.prototype.requestAccountTums = function (options) {
  *    type: relation type
  *    account(required): the query account
  *    ledger(option): specify ledger, ledger can be:
- *    ledger_index=xxx, ledger_hash=xxx, or ledger=closed|current|validated  
+ *    ledger_index=xxx, ledger_hash=xxx, or ledger=closed|current|validated
  *    limit min is 200,
  *    marker for more relations
  * @returns {Request}
@@ -527,7 +525,7 @@ Remote.prototype.requestAccountRelations = function (options) {
  * @param options
  *    account(required): the query account
  *    ledger(option): specify ledger, ledger can be:
- *    ledger_index=xxx, ledger_hash=xxx, or ledger=closed|current|validated  
+ *    ledger_index=xxx, ledger_hash=xxx, or ledger=closed|current|validated
  *    limit min is 200, marker
  * @returns {Request}
  */
@@ -546,7 +544,7 @@ Remote.prototype.requestAccountOffers = function (options) {
  * options parameters
  *    account(required): the query account
  *    ledger(option): specify ledger, ledger can be:
- *    ledger_index=xxx, ledger_hash=xxx, or ledger=closed|current|validated  
+ *    ledger_index=xxx, ledger_hash=xxx, or ledger=closed|current|validated
  *    limit limit output tx record
  *    ledger_min default 0, ledger_max default -1
  *    marker: {ledger:xxx, seq: x}
@@ -595,7 +593,7 @@ Remote.prototype.requestAccountTx = function (options) {
         Number(options.marker.ledger) !== NaN && Number(options.marker.seq) !== NaN) {
         request.message.marker = options.marker;
     }
-    if (options.forward && typeof options.forward === 'boolean') { //true 正向；false反向
+    if (options.forward && typeof options.forward === 'boolean') { // true 正向；false反向
         request.message.forward = options.forward;
     }
     return request;
@@ -658,11 +656,11 @@ Remote.prototype.requestBrokerage = function (options) {
         request.message.account = new Error('issuer parameter is invalid');
         return request;
     }
-    if (!/^[0-9]*[1-9][0-9]*$/.test(app)) { //正整数
+    if (!/^[0-9]*[1-9][0-9]*$/.test(app)) { // 正整数
         request.message.app = new Error('invalid app, it is a positive integer.');
         return request;
     }
-    if (!utils.isValidCurrency(currency)) { //正整数
+    if (!utils.isValidCurrency(currency)) { // 正整数
         request.message.currency = new Error('invalid currency.');
         return request;
     }
@@ -897,7 +895,7 @@ Remote.prototype.callContractTx = function (options) {
     var account = options.account;
     var des = options.destination;
     var params = options.params;
-    var foo = options.foo; //函数名
+    var foo = options.foo; // 函数名
     if (!utils.isValidAddress(account, this._token)) {
         tx.tx_json.account = new Error('invalid address');
         return tx;
@@ -974,11 +972,11 @@ Remote.prototype.buildBrokerageTx = function (options) {
         tx.tx_json.src = new Error('invalid address');
         return tx;
     }
-    if (!/^\d+$/.test(mol)) { //(正整数 + 0)
+    if (!/^\d+$/.test(mol)) { // (正整数 + 0)
         tx.tx_json.mol = new Error('invalid mol, it is a positive integer or zero.');
         return tx;
     }
-    if (!/^[0-9]*[1-9][0-9]*$/.test(den) || !/^[0-9]*[1-9][0-9]*$/.test(app)) { //正整数
+    if (!/^[0-9]*[1-9][0-9]*$/.test(den) || !/^[0-9]*[1-9][0-9]*$/.test(app)) { // 正整数
         tx.tx_json.den = new Error('invalid den/app, it is a positive integer.');
         return tx;
     }
@@ -992,11 +990,11 @@ Remote.prototype.buildBrokerageTx = function (options) {
     }
 
     tx.tx_json.TransactionType = 'Brokerage';
-    tx.tx_json.Account = account; //管理员账号
-    tx.tx_json.OfferFeeRateNum = mol; //分子(正整数 + 0)
-    tx.tx_json.OfferFeeRateDen = den; //分母(正整数)
-    tx.tx_json.AppType = app; //应用来源(正整数)
-    tx.tx_json.Amount = ToAmount(amount, this._token); //币种,这里amount字段中的value值只是占位，没有实际意义。
+    tx.tx_json.Account = account; // 管理员账号
+    tx.tx_json.OfferFeeRateNum = mol; // 分子(正整数 + 0)
+    tx.tx_json.OfferFeeRateDen = den; // 分母(正整数)
+    tx.tx_json.AppType = app; // 应用来源(正整数)
+    tx.tx_json.Amount = ToAmount(amount, this._token); // 币种,这里amount字段中的value值只是占位，没有实际意义。
 
     return tx;
 };
@@ -1259,7 +1257,7 @@ Remote.prototype.buildOfferCreateTx = function (options) {
         tx.tx_json.taker_pays2 = new Error('invalid to gets amount object');
         return tx;
     }
-    if (app && !/^[0-9]*[1-9][0-9]*$/.test(app)) { //正整数
+    if (app && !/^[0-9]*[1-9][0-9]*$/.test(app)) { // 正整数
         tx.tx_json.app = new Error('invalid app, it is a positive integer.');
         return tx;
     }
@@ -1268,8 +1266,8 @@ Remote.prototype.buildOfferCreateTx = function (options) {
     if (offer_type === 'Sell') tx.setFlags(offer_type);
     if (app) tx.tx_json.AppType = app;
     tx.tx_json.Account = src;
-    tx.tx_json.TakerPays = taker_pays2 ? taker_pays2 : ToAmount(taker_pays, this._token);
-    tx.tx_json.TakerGets = taker_gets2 ? taker_gets2 : ToAmount(taker_gets, this._token);
+    tx.tx_json.TakerPays = taker_pays2 || ToAmount(taker_pays, this._token);
+    tx.tx_json.TakerGets = taker_gets2 || ToAmount(taker_gets, this._token);
 
     return tx;
 };
