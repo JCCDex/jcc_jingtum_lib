@@ -6,7 +6,8 @@ var Transaction = require('./src/transaction');
 var Account = require('./src/account');
 var OrderBook = require('./src/orderbook');
 var utils = require('./src/utils');
-var Wallet = require('jcc_jingtum_base_lib').Wallet;
+var LocalSign = require('./src/local_sign');
+// var Wallet = require('jcc_jingtum_base_lib').Wallet;
 
 exports.Remote = Remote;
 exports.Request = Request;
@@ -14,4 +15,5 @@ exports.Transaction = Transaction;
 exports.Account = Account;
 exports.OrderBook = OrderBook;
 exports.utils = utils;
-exports.Wallet = Wallet;
+exports.LocalSign = LocalSign;
+// exports.Wallet = Wallet;

@@ -1,4 +1,4 @@
-const base = require('jcc_jingtum_base_lib').Wallet;
+var base = require('jcc_jingtum_base_lib').Wallet;
 var jser = require('../lib/Serializer').Serializer;
 
 function jingtum_sign_tx(in_tx, in_v, token) {
