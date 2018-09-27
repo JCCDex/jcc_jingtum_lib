@@ -7,7 +7,6 @@ var Account = require('./src/account');
 var OrderBook = require('./src/orderbook');
 var utils = require('./src/utils');
 var LocalSign = require('./src/local_sign');
-// var Wallet = require('jcc_jingtum_base_lib').Wallet;
 
 exports.Remote = Remote;
 exports.Request = Request;
@@ -16,4 +15,3 @@ exports.Account = Account;
 exports.OrderBook = OrderBook;
 exports.utils = utils;
 exports.LocalSign = LocalSign;
-// exports.Wallet = Wallet;

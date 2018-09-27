@@ -11,10 +11,12 @@ function parseKey(key, token) {
     var currency = utils.getCurrency(token);
 
     function parsePart(part) {
-        if (part === currency) return {
-            currency: currency,
-            issuer: ''
-        };
+        if (part === currency) {
+            return {
+                currency: currency,
+                issuer: ''
+            };
+        }
         var _parts = part.split('/');
         if (_parts.length !== 2) return null;
         if (!utils.isValidCurrency(_parts[0])) return null;
