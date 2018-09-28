@@ -658,7 +658,7 @@ var ACCOUNT_ZERO = function (token) {
     return config ? config.ACCOUNT_ZERO : '';
 };
 
-var ACCOUNT_ONE = function (token) {
+var getAccountOne = function (token) {
     token = token || 'swt';
     var config = configs.find(function (conf) {
         return conf.currency.toLowerCase() === token.toLowerCase();
@@ -681,7 +681,7 @@ module.exports = {
     processTx: processTx,
     LEDGER_STATES: LEDGER_STATES,
     ACCOUNT_ZERO: ACCOUNT_ZERO,
-    ACCOUNT_ONE: ACCOUNT_ONE,
+    getAccountOne: getAccountOne,
     arraySet: arraySet,
     getCurrency: getCurrency,
     getFee: getFee

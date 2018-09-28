@@ -631,7 +631,7 @@ Remote.prototype.requestOrderBook = function (options) {
 
     request.message.taker_gets = taker_gets;
     request.message.taker_pays = taker_pays;
-    request.message.taker = options.taker ? options.taker : utils.ACCOUNT_ONE;
+    request.message.taker = options.taker ? options.taker : utils.getAccountOne(this._token);
     request.message.limit = options.limit;
     return request;
 };
@@ -727,47 +727,6 @@ Remote.prototype.requestPathFind = function (options) {
     request.message.destination_account = dest;
     request.message.destination_amount = ToAmount(amount, this._token);
     return request;
-};
-
-// ---------------------- subscribe --------------------
-/**
- * @param streams
- * @returns {Request}
- */
-Remote.prototype.subscribe = function (streams) {
-    var request = new Request(this, 'subscribe');
-    if (streams) {
-        request.message.streams = Array.isArray(streams) ? streams : [streams];
-    }
-    return request;
-};
-
-/**
- * @param streams
- * @returns {Request}
- */
-Remote.prototype.unsubscribe = function (streams) {
-    var request = new Request(this, 'unsubscribe');
-    if (streams) {
-        request.message.streams = Array.isArray(streams) ? streams : [streams];
-    }
-    return request;
-};
-
-/**
- * stub function for account event
- * @returns {Account}
- */
-Remote.prototype.createAccountStub = function () {
-    return new Account(this);
-};
-
-/** stub function for order book
- *
- * @returns {OrderBook}
- */
-Remote.prototype.createOrderBookStub = function () {
-    return new OrderBook(this);
 };
 
 // ---------------------- transaction request --------------------
@@ -1300,6 +1259,47 @@ Remote.prototype.buildOfferCancelTx = function (options) {
     tx.tx_json.OfferSequence = Number(sequence);
 
     return tx;
+};
+
+// ---------------------- subscribe --------------------
+/**
+ * @param streams
+ * @returns {Request}
+ */
+Remote.prototype.subscribe = function (streams) {
+    var request = new Request(this, 'subscribe');
+    if (streams) {
+        request.message.streams = Array.isArray(streams) ? streams : [streams];
+    }
+    return request;
+};
+
+/**
+ * @param streams
+ * @returns {Request}
+ */
+Remote.prototype.unsubscribe = function (streams) {
+    var request = new Request(this, 'unsubscribe');
+    if (streams) {
+        request.message.streams = Array.isArray(streams) ? streams : [streams];
+    }
+    return request;
+};
+
+/**
+ * stub function for account event
+ * @returns {Account}
+ */
+Remote.prototype.createAccountStub = function () {
+    return new Account(this);
+};
+
+/** stub function for order book
+ *
+ * @returns {OrderBook}
+ */
+Remote.prototype.createOrderBookStub = function () {
+    return new OrderBook(this);
 };
 
 module.exports = Remote;
