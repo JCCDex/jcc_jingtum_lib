@@ -305,9 +305,41 @@ describe('test remote', function () {
         })
     })
 
-    describe('test affectedAccounts', function () {})
+    describe('test affectedAccounts', function () {
+        it('only have Account', function () {
+            let data = utils.affectedAccounts(txData.input24)
+            expect(data).to.deep.equal(txData.output24);
+        })
 
-    describe('test affectedBooks', function () {})
+        it('include all cases', function () {
+            let data = utils.affectedAccounts(txData.input25)
+            expect(data).to.deep.equal(txData.output25);
+        })
+    })
+
+    describe('test affectedBooks', function () {
+        it('if the parameter is not object', function () {
+            let data = utils.affectedBooks({})
+            expect(data).to.deep.equal([]);
+        })
+
+        it('if the AffectedNodes is not array', function () {
+            let data = utils.affectedBooks({
+                meta: {}
+            })
+            expect(data).to.deep.equal([]);
+        })
+
+        it('if is buy', function () {
+            let data = utils.affectedBooks(txData.input26, 'swt')
+            expect(data).to.deep.equal(txData.output26)
+        })
+
+        it('if is sell', function () {
+            let data = utils.affectedBooks(txData.input27, 'swt')
+            expect(data).to.deep.equal(txData.output27)
+        })
+    })
 
     describe('test processTx', function () {
         it('check sent', function () {

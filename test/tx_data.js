@@ -1,5 +1,8 @@
-const testAddress = require('./config').testAddress
-
+const config = require('./config')
+const {
+    testAddress,
+    testDestinationAddress
+} = config
 const input1 = {
     meta: {
         AffectedNodes: [],
@@ -1557,6 +1560,193 @@ const output23 = {
     }]
 }
 
+const input24 = {
+    transaction: {
+        Account: testAddress
+    }
+}
+
+const input25 = {
+    transaction: {
+        Account: testAddress,
+        Destination: testDestinationAddress,
+        LimitAmount: {
+            issuer: testDestinationAddress
+        }
+    },
+    meta: {
+        TransactionResult: 'tesSUCCESS',
+        AffectedNodes: [{
+            ModifiedNode: {
+                FinalFields: {
+                    Account: 'jHdWAmh8AAjhjqG7zEDA5RBgAnQHyd2g5s'
+                },
+                LedgerEntryType: 'AccountRoot'
+            }
+        }, {
+            ModifiedNode: {
+                FinalFields: {
+                    HighLimit: {
+                        issuer: 'jHdWAmh8AAjhjqG7zEDA5RBgAnQHyd2g5x'
+                    },
+                    LowLimit: {
+                        issuer: 'jHdWAmh8AAjhjqG7zEDA5RBgAnQHyd2g5c'
+                    }
+                },
+                LedgerEntryType: 'SkywellState'
+            }
+        }, {
+            ModifiedNode: {
+                FinalFields: {
+                    HighLimit: {
+
+                    },
+                    LowLimit: {
+
+                    }
+                },
+                LedgerEntryType: 'SkywellState'
+            }
+        }, {
+            ModifiedNode: {
+                FinalFields: {
+                    Account: 'jHdWAmh8AAjhjqG7zEDA5RBgAnQHyd2g5d'
+                },
+                LedgerEntryType: 'Offer'
+            }
+        }]
+    }
+}
+const output24 = [testAddress];
+
+const output25 = [testAddress, testDestinationAddress, 'jHdWAmh8AAjhjqG7zEDA5RBgAnQHyd2g5s', 'jHdWAmh8AAjhjqG7zEDA5RBgAnQHyd2g5x', 'jHdWAmh8AAjhjqG7zEDA5RBgAnQHyd2g5c', 'jHdWAmh8AAjhjqG7zEDA5RBgAnQHyd2g5d']
+
+const input26 = {
+    transaction: {
+
+    },
+    meta: {
+        AffectedNodes: [{
+            ModifiedNode: {
+                FinalFields: {
+                    TakerGets: {
+                        currency: 'CNY',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '0.4'
+                    },
+                    TakerPays: {
+                        currency: 'JJCC',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '1'
+                    }
+                },
+                LedgerEntryType: 'Offer'
+            }
+        }, {
+            ModifiedNode: {
+                FinalFields: {
+                    TakerGets: {
+                        currency: 'CNY',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '0.4'
+                    },
+                    TakerPays: {
+                        currency: 'JJCC',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '1'
+                    }
+                },
+                LedgerEntryType: 'Offers'
+            }
+        }, {
+            ModifiedNodes: {
+                FinalFields: {
+                    TakerGets: {
+                        currency: 'CNY',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '0.4'
+                    },
+                    TakerPays: {
+                        currency: 'JJCC',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '1'
+                    }
+                },
+                LedgerEntryType: 'Offers'
+            }
+        }]
+    }
+}
+
+const input27 = {
+    transaction: {
+        Flags: 1010101
+    },
+    meta: {
+        AffectedNodes: [{
+            ModifiedNode: {
+                FinalFields: {
+                    TakerGets: {
+                        currency: 'CNY',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '0.4'
+                    },
+                    TakerPays: {
+                        currency: 'JJCC',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '1'
+                    }
+                },
+                LedgerEntryType: 'Offer'
+            }
+        }, {
+            ModifiedNode: {
+                FinalFields: {
+                    TakerGets: {
+                        currency: 'CNY',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '0.4'
+                    },
+                    TakerPays: {
+                        currency: 'JJCC',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '1'
+                    }
+                },
+                LedgerEntryType: 'Offer'
+            }
+        }, {
+            ModifiedNode: {
+                FinalFields: {
+                    TakerGets: '0.4',
+                    TakerPays: {
+                        currency: 'JJCC',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '1'
+                    }
+                },
+                LedgerEntryType: 'Offer'
+            }
+        }, {
+            ModifiedNode: {
+                FinalFields: {
+                    TakerGets: {
+                        currency: 'CNY',
+                        issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
+                        value: '0.4'
+                    },
+                    TakerPays: '1'
+                },
+                LedgerEntryType: 'Offer'
+            }
+        }]
+    }
+}
+
+const output26 = ['CNY/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or:JJCC/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or']
+
+const output27 = ['JJCC/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or:CNY/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or', 'JJCC/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or:SWT', 'SWT:CNY/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or']
+
 module.exports = {
     input1,
     input2,
@@ -1603,5 +1793,13 @@ module.exports = {
     output20,
     output21,
     output22,
-    output23
+    output23,
+    input24,
+    input25,
+    output24,
+    output25,
+    input26,
+    input27,
+    output26,
+    output27
 }
