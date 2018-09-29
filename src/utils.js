@@ -48,7 +48,6 @@ var Flags = {
 function hexToString(h) {
     var a = [];
     var i = 0;
-
     if (h.length % 2) {
         a.push(String.fromCharCode(parseInt(h.substring(0, 1), 16)));
         i = 1;
@@ -82,7 +81,7 @@ var getFee = function (token) {
     var config = configs.find(function (conf) {
         return conf.currency.toLowerCase() === token.toLowerCase();
     })
-    var fee = config ? config.fee : 'SWT';
+    var fee = config ? config.fee : 10000;
     return fee;
 }
 
@@ -92,7 +91,7 @@ var getFee = function (token) {
  * @returns {boolean}
  */
 function isValidAmount(amount, token) {
-    if (typeof amount !== 'object') {
+    if (amount === null || typeof amount !== 'object') {
         return false;
     }
     // check amount value
@@ -122,7 +121,7 @@ function isValidAmount(amount, token) {
  * @returns {boolean}
  */
 function isValidAmount0(amount, token) {
-    if (typeof amount !== 'object') {
+    if (amount === null || typeof amount !== 'object') {
         return false;
     }
     // check amount currency
@@ -164,29 +163,26 @@ function parseAmount(amount, token) {
     }
 }
 
-var CURRENCY_RE = /^([a-zA-Z0-9]{3,6}|[A-F0-9]{40})$/;
-
 function isValidCurrency(currency) {
-    if (!currency || typeof currency !== 'string' ||
-        currency === '') {
+    if (!currency || typeof currency !== 'string') {
         return false;
     }
+    var CURRENCY_RE = /^([a-zA-Z0-9]{3,6}|[A-F0-9]{40})$/;
     return CURRENCY_RE.test(currency);
 }
 
 var LEDGER_STATES = ['current', 'closed', 'validated'];
 
-var HASH__RE = /^[A-F0-9]{64}$/;
 /**
  * hash check for tx and ledger hash
  * @param hash
  * @returns {boolean}
  */
 function isValidHash(hash) {
-    if (!hash || typeof hash !== 'string' ||
-        hash === '') {
+    if (!hash || typeof hash !== 'string') {
         return false;
     }
+    var HASH__RE = /^[A-F0-9]{64}$/;
     return HASH__RE.test(hash);
 }
 
@@ -213,7 +209,7 @@ function processAffectNode(an) {
         if (an[x]) result.diffType = x;
     });
 
-    if (!result.diffType) return null;
+    if (!result.diffType) return {};
 
     an = an[result.diffType];
 
@@ -368,8 +364,6 @@ function AmountNegate(amount) {
 }
 
 function AmountAdd(amount1, amount2) {
-    if (!amount1) return amount2;
-    if (!amount2) return amount1;
     if (amount1 && amount2) {
         return {
             value: String(new Bignumber(amount1.value).plus(amount2.value)),
@@ -377,7 +371,9 @@ function AmountAdd(amount1, amount2) {
             issuer: amount1.issuer
         };
     }
-    return null;
+    if (!amount1 && !amount2) return null
+    if (!amount1) return amount2;
+    return amount1;
 }
 
 function AmountSubtract(amount1, amount2) {
@@ -650,20 +646,18 @@ function arraySet(count, value) {
     return a;
 }
 
-var ACCOUNT_ZERO = function (token) {
-    token = token || 'swt';
+var getAccountZero = function (token) {
     var config = configs.find(function (conf) {
         return conf.currency.toLowerCase() === token.toLowerCase();
     })
-    return config ? config.ACCOUNT_ZERO : '';
+    return config ? config.ACCOUNT_ZERO : 'jjjjjjjjjjjjjjjjjjjjjhoLvTp';
 };
 
 var getAccountOne = function (token) {
-    token = token || 'swt';
     var config = configs.find(function (conf) {
         return conf.currency.toLowerCase() === token.toLowerCase();
     })
-    return config ? config.ACCOUNT_ONE : '';
+    return config ? config.ACCOUNT_ONE : 'jjjjjjjjjjjjjjjjjjjjBZbvri';
 };
 
 module.exports = {
@@ -680,9 +674,9 @@ module.exports = {
     affectedBooks: affectedBooks,
     processTx: processTx,
     LEDGER_STATES: LEDGER_STATES,
-    ACCOUNT_ZERO: ACCOUNT_ZERO,
-    getAccountOne: getAccountOne,
     arraySet: arraySet,
     getCurrency: getCurrency,
-    getFee: getFee
+    getFee: getFee,
+    getAccountZero: getAccountZero,
+    getAccountOne: getAccountOne
 };
