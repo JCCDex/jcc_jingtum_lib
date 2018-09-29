@@ -1,6 +1,6 @@
 const chai = require('chai');
 chai.use(require('chai-json-schema'));
-
+const Remote = require('../src/remote');
 const schema = require('./schema');
 const expect = chai.expect;
 const TEST_NODE = 'ws://ts5.jingtum.com:5020'
@@ -16,7 +16,7 @@ let {
 } = config
 
 describe('test remote', function () {
-    let Remote = require('../src/remote');
+
     describe('test constructor', function () {
         it('throw error if the arguments is undefined', function () {
             let remote = new Remote();

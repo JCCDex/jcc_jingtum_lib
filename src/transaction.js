@@ -140,15 +140,6 @@ function __hexToString(h) {
     return a.join('');
 }
 
-function __stringToHex(s) {
-    var result = '';
-    for (var i = 0; i < s.length; i++) {
-        var b = s.charCodeAt(i);
-        result += b < 16 ? '0' + b.toString(16) : b.toString(16);
-    }
-    return result;
-}
-
 /**
  * just only memo data
  * @param memo
@@ -163,7 +154,7 @@ Transaction.prototype.addMemo = function (memo) {
         return this;
     }
     var _memo = {};
-    _memo.MemoData = __stringToHex(utf8.encode(memo));
+    _memo.MemoData = utils.stringToHex(utf8.encode(memo));
     this.tx_json.Memos = (this.tx_json.Memos || []).concat({
         Memo: _memo
     });

@@ -3,7 +3,6 @@ const expect = chai.expect;
 const config = require('./config')
 let utils = require('../src/utils');
 let txData = require('./tx_data');
-const fs = require('fs')
 describe('test remote', function () {
 
     describe('test hexToString', function () {
