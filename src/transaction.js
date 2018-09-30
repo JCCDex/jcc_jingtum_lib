@@ -124,22 +124,6 @@ Transaction.prototype.setSecret = function (secret) {
     this._secret = secret;
 };
 
-function __hexToString(h) {
-    var a = [];
-    var i = 0;
-
-    if (h.length % 2) {
-        a.push(String.fromCharCode(parseInt(h.substring(0, 1), 16)));
-        i = 1;
-    }
-
-    for (; i < h.length; i += 2) {
-        a.push(String.fromCharCode(parseInt(h.substring(i, i + 2), 16)));
-    }
-
-    return a.join('');
-}
-
 /**
  * just only memo data
  * @param memo
@@ -296,7 +280,7 @@ function signing(self, callback) {
     if (self.tx_json.Memos) {
         var memos = self.tx_json.Memos;
         for (var i = 0; i < memos.length; i++) {
-            memos[i].Memo.MemoData = utf8.decode(__hexToString(memos[i].Memo.MemoData));
+            memos[i].Memo.MemoData = utf8.decode(utils.hexToString(memos[i].Memo.MemoData));
         }
     }
     if (self.tx_json.SendMax && typeof self.tx_json.SendMax === 'string') {
