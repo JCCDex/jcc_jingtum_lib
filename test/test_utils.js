@@ -456,4 +456,53 @@ describe('test remote', function () {
             expect(res).to.deep.equal(txData.output23)
         })
     })
+
+    describe('test parseKey', function () {
+        it('return null if the length of parts is not 2 which key splites ":"', function () {
+            let key = utils.parseKey('aaa', 'swt');
+            expect(key).to.equal(null);
+        })
+        it('return null if the length of part is not 2 which part splites "/"', function () {
+            let key = utils.parseKey('aaa:aaaa', 'swt');
+            expect(key).to.equal(null);
+        })
+
+        it('return correct result if key is valid', function () {
+            let key = utils.parseKey('CNY/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or:JJCC/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or', 'swt');
+            expect(key).to.deep.equal({
+                gets: {
+                    currency: 'CNY',
+                    issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or'
+                },
+                pays: {
+                    currency: 'JJCC',
+                    issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or'
+                }
+            });
+        })
+
+        it('return correct result if part is swt', function () {
+            let key = utils.parseKey('SWT:JJCC/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or', 'swt');
+            expect(key).to.deep.equal({
+                gets: {
+                    currency: 'SWT',
+                    issuer: ''
+                },
+                pays: {
+                    currency: 'JJCC',
+                    issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or'
+                }
+            });
+        })
+
+        it('return null if currency is invalid', function () {
+            let key = utils.parseKey('SW/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or:JJCC/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or', 'swt');
+            expect(key).to.equal(null);
+        })
+
+        it('return null if address is invalid', function () {
+            let key = utils.parseKey('SWT/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9o:JJCC/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or', 'swt');
+            expect(key).to.equal(null);
+        })
+    })
 });

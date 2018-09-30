@@ -660,6 +660,37 @@ var getAccountOne = function (token) {
     return config ? config.ACCOUNT_ONE : 'jjjjjjjjjjjjjjjjjjjjBZbvri';
 };
 
+var parseKey = function (key, token) {
+    var parts = key.split(':');
+    if (parts.length !== 2) return null;
+    var currency = getCurrency(token);
+
+    function parsePart(part) {
+        if (part === currency) {
+            return {
+                currency: currency,
+                issuer: ''
+            };
+        }
+        var _parts = part.split('/');
+        if (_parts.length !== 2) return null;
+        if (!isValidCurrency(_parts[0])) return null;
+        if (!Wallet.isValidAddress(_parts[1], currency)) return null;
+        return {
+            currency: _parts[0],
+            issuer: _parts[1]
+        };
+    }
+
+    var gets = parsePart(parts[0]);
+    var pays = parsePart(parts[1]);
+    if (!gets || !pays) return null;
+    return {
+        gets: gets,
+        pays: pays
+    };
+}
+
 module.exports = {
     hexToString: hexToString,
     stringToHex: stringToHex,
@@ -678,5 +709,6 @@ module.exports = {
     getCurrency: getCurrency,
     getFee: getFee,
     getAccountZero: getAccountZero,
-    getAccountOne: getAccountOne
+    getAccountOne: getAccountOne,
+    parseKey
 };

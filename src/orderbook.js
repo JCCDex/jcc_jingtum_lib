@@ -5,37 +5,6 @@ var util = require('util');
 var Event = require('events').EventEmitter;
 var utils = require('./utils');
 
-function parseKey(key, token) {
-    var parts = key.split(':');
-    if (parts.length !== 2) return null;
-    var currency = utils.getCurrency(token);
-
-    function parsePart(part) {
-        if (part === currency) {
-            return {
-                currency: currency,
-                issuer: ''
-            };
-        }
-        var _parts = part.split('/');
-        if (_parts.length !== 2) return null;
-        if (!utils.isValidCurrency(_parts[0])) return null;
-        if (!utils.isValidAddress(_parts[1], currency)) return null;
-        return {
-            currency: _parts[0],
-            issuer: _parts[1]
-        };
-    }
-
-    var gets = parsePart(parts[0]);
-    var pays = parsePart(parts[1]);
-    if (!gets || !pays) return null;
-    return {
-        gets: gets,
-        pays: pays
-    };
-}
-
 /**
  * order book stub for all order book
  * key: currency/issuer:currency/issuer
@@ -55,7 +24,7 @@ function OrderBook(remote) {
 
     self.on('newListener', function (key, listener) {
         if (key === 'removeListener') return;
-        var pair = parseKey(key, self._token);
+        var pair = utils.parseKey(key, self._token);
         if (!pair) {
             self.pair = new Error("invalid key");
             return self;
@@ -63,7 +32,7 @@ function OrderBook(remote) {
         self._books[key] = listener;
     });
     self.on('removeListener', function (key) {
-        var pair = parseKey(key, self._token);
+        var pair = utils.parseKey(key, self._token);
         if (!pair) {
             self.pair = new Error("invalid key");
             return self;
