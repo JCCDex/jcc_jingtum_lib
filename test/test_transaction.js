@@ -634,39 +634,194 @@ describe('test Transaction', function () {
             })
         })
 
-        // it('sign order successfully through request sequence', function (done) {
-        //     this.timeout(0)
-        //     let remote = new Remote({
-        //         server: JT_NODE,
-        //         local_sign: true
-        //     });
-        //     let inst = new Transaction(remote);
-        //     inst.setSecret(config.testSecret);
-        //     let testData = {
-        //         Flags: 0,
-        //         Fee: 10000,
-        //         TransactionType: 'OfferCreate',
-        //         Account: config.testAddress,
-        //         TakerPays: {
-        //             value: '0.00001',
-        //             currency: 'CNY',
-        //             issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or'
-        //         },
-        //         TakerGets: 1000000
-        //     }
-        //     inst.parseJson(testData);
-        //     let stub = sinon.stub(inst, "sign");
-        //     stub.onCall().returns(new Error('aaaaaaa'))
-        //     remote.connect((err, res) => {
-        //         inst.sign(function (err, hash) {
-        //             expect(err).to.be.null;
-        //             console.log(testData)
-        //             expect(hash).to.be.a('string');
-        //             done()
-        //             remote.disconnect();
-        //             stub.restore()
-        //         })
-        //     })
-        // })
+        it('callback error if request sequence in error', function (done) {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true
+            });
+            let inst = new Transaction(remote);
+            inst.setSecret(config.testSecret);
+            let testData = {
+                Flags: 0,
+                Fee: 10000,
+                TransactionType: 'OfferCreate',
+                Account: config.testAddress,
+                TakerPays: {
+                    value: '0.00001',
+                    currency: 'CNY',
+                    issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or'
+                },
+                TakerGets: 1000000
+            }
+            inst.parseJson(testData);
+            remote.connect((err, res) => {
+                let stub = sinon.stub(Request.prototype, "submit");
+                stub.yields(new Error('error'))
+                inst.sign(function (err, hash) {
+                    expect(err).to.be.an('error');
+                    expect(err.message).to.equal('error');
+                    expect(hash).to.equal(undefined);
+                    remote.disconnect();
+                    stub.restore();
+                    done()
+                })
+            })
+        })
+
+        it('sign order successfully if request sequence successfully', function (done) {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true
+            });
+            let inst = new Transaction(remote);
+            inst.setSecret(config.testSecret);
+            let testData = {
+                Flags: 0,
+                Fee: 10000,
+                TransactionType: 'OfferCreate',
+                Account: config.testAddress,
+                TakerPays: {
+                    value: '0.00001',
+                    currency: 'CNY',
+                    issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or'
+                },
+                TakerGets: 1000000
+            }
+            inst.parseJson(testData);
+            remote.connect((err, res) => {
+                let stub = sinon.stub(Request.prototype, "submit");
+                stub.yields(null, {
+                    account_data: {
+                        Sequence: 200
+                    }
+                })
+                inst.sign(function (err, hash) {
+                    expect(err).to.be.null;
+                    expect(testData.Sequence).to.equal(200)
+                    expect(hash).to.be.a('string');
+                    stub.restore();
+                    remote.disconnect();
+                    done()
+                })
+            })
+        })
+    })
+
+    describe('test submit', function () {
+        it('callback error if the tx_json has error message', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true
+            });
+            let inst = new Transaction(remote);
+
+            let testData = {
+                Flags: 0,
+                Fee: 10000,
+                TransactionType: 'OfferCreate',
+                Account: config.testAddress,
+                TakerPays: {
+                    value: '0.00001',
+                    currency: 'CNY',
+                    issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or'
+                },
+                TakerGets: 1000000
+            }
+            inst.parseJson(testData);
+            inst.setSecret(config.testSecret.substring(1));
+            inst.submit(function (error, res) {
+                expect(error).to.not.be.null;
+            })
+        })
+
+        it('if the TransactionType is Singer', function (done) {
+            this.timeout(0)
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true
+            });
+            let inst = new Transaction(remote);
+
+            let testData = {
+                TransactionType: 'Signer',
+                blob: '1111'
+            }
+            inst.parseJson(testData);
+            remote.connect((err, res) => {
+                inst.submit(function (error, res) {
+                    remote.disconnect()
+                    done()
+                })
+            })
+        })
+
+        it('if is local sign', function (done) {
+            this.timeout(0)
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true
+            });
+            let inst = new Transaction(remote);
+            let testData = {
+                blob: '1111'
+            }
+            inst.parseJson(testData);
+            remote.connect((err, res) => {
+                inst.submit(function (error, res) {
+                    remote.disconnect()
+                    done()
+                })
+            })
+
+        })
+
+        it('if is not local_sign and signer', function (done) {
+            this.timeout(0)
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: false
+            });
+            let inst = new Transaction(remote);
+            let testData = {
+                blob: '1111'
+            }
+            inst.parseJson(testData);
+            remote.connect((err, res) => {
+                inst.submit(function (error, res) {
+                    remote.disconnect()
+                    done()
+                })
+            })
+
+        })
+
+
+        it('if is not local_sign and signer', function (done) {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true
+            });
+            let inst = new Transaction(remote);
+            inst.setSecret(config.testSecret);
+            let testData = {
+                Flags: 0,
+                Fee: 10000,
+                TransactionType: 'Payment',
+                Account: config.testAddress,
+                Amount: {
+                    "value": 1,
+                    "currency": "BIZ",
+                    "issuer": "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or"
+                },
+                Destination: config.testDestinationAddress
+            }
+            inst.parseJson(testData);
+            remote.connect((err, res) => {
+                inst.submit(function (err, hash) {
+                    done()
+                    remote.disconnect()
+                })
+            })
+        })
     })
 });
