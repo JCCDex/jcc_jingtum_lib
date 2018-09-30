@@ -1556,7 +1556,7 @@ const output23 = {
         "effect": "set_regular_key",
         "type": "null",
         "account": "jHdWAmh8AAjhjqG7zEDA5RBgAnQHyd2g5m",
-        "regularkey": "jwnqKpXJYJPeAnUdVUv3LfbxiJh5ZVXh79"
+        "regularkey": testAddress
     }]
 }
 
