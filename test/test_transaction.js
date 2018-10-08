@@ -639,6 +639,7 @@ describe('test Transaction', function () {
                 server: JT_NODE,
                 local_sign: true
             });
+            this.timeout(0)
             let inst = new Transaction(remote);
             inst.setSecret(config.testSecret);
             let testData = {
