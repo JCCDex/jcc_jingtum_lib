@@ -7,7 +7,10 @@ const config = require('./config');
 const Request = require('../src/request')
 const sinon = require('sinon')
 let {
-    JT_NODE
+    JT_NODE,
+    testSecret,
+    testAddress,
+    testDestinationAddress
 } = config
 
 describe('test Transaction', function () {
@@ -82,8 +85,8 @@ describe('test Transaction', function () {
                 local_sign: true
             });
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret);
-            expect(inst._secret).to.equal(config.testSecret)
+            inst.setSecret(testSecret);
+            expect(inst._secret).to.equal(testSecret)
         })
 
         it('the tx_json._secret is error if the secret is invalid', function () {
@@ -92,7 +95,7 @@ describe('test Transaction', function () {
                 local_sign: true
             });
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret.substring(1));
+            inst.setSecret(testSecret.substring(1));
             expect(inst.tx_json._secret).to.be.an('error');
             expect(inst.tx_json._secret.message).to.equal('invalid secret');
             expect(inst._secret).to.equal(undefined)
@@ -228,7 +231,7 @@ describe('test Transaction', function () {
                 path: '[]',
                 choice: {
                     currency: 'JSECT',
-                    issuer: config.testAddress,
+                    issuer: testAddress,
                     value: '0.0002'
                 }
             }
@@ -267,7 +270,7 @@ describe('test Transaction', function () {
                 path: '[[{"account":"jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or","type":1,"type_hex":"0000000000000001"},{"currency":"SWT","type":16,"type_hex":"0000000000000010"}]]',
                 choice: {
                     currency: 'JSECT',
-                    issuer: config.testAddress,
+                    issuer: testAddress,
                     value: '0.0002'
                 }
             }
@@ -276,7 +279,7 @@ describe('test Transaction', function () {
             expect(inst.tx_json.Paths).to.deep.equal(JSON.parse(testData.path));
             expect(inst.tx_json.SendMax).to.deep.equal({
                 currency: 'JSECT',
-                issuer: config.testAddress,
+                issuer: testAddress,
                 value: '0.00020002'
             });
         })
@@ -309,7 +312,7 @@ describe('test Transaction', function () {
             let inst = new Transaction(remote);
             let amount = {
                 currency: 'JSECT',
-                issuer: config.testAddress,
+                issuer: testAddress,
                 value: '0.0002'
             };
             inst.setSendMax(amount);
@@ -469,14 +472,14 @@ describe('test Transaction', function () {
                 local_sign: true
             });
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret);
+            inst.setSecret(testSecret);
             let testData = {
                 Flags: 0,
                 Fee: 10000,
                 TransactionType: 'Payment',
-                Account: config.testAddress,
+                Account: testAddress,
                 Amount: '1000000',
-                Destination: config.testDestinationAddress,
+                Destination: testDestinationAddress,
                 Memos: [{
                     Memo: {
                         MemoData: 'test'
@@ -507,18 +510,18 @@ describe('test Transaction', function () {
                 local_sign: true
             });
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret);
+            inst.setSecret(testSecret);
             let testData = {
                 Flags: 0,
                 Fee: 10000,
                 TransactionType: 'Payment',
-                Account: config.testAddress,
+                Account: testAddress,
                 Amount: {
                     "value": 1,
                     "currency": "BIZ",
                     "issuer": "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or"
                 },
-                Destination: config.testDestinationAddress,
+                Destination: testDestinationAddress,
                 Sequence: 4737
             }
             inst.parseJson(testData);
@@ -542,12 +545,12 @@ describe('test Transaction', function () {
                 local_sign: true
             });
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret);
+            inst.setSecret(testSecret);
             let testData = {
                 Flags: 0,
                 Fee: 10000,
                 TransactionType: 'OfferCreate',
-                Account: config.testAddress,
+                Account: testAddress,
                 TakerPays: '1000000',
                 TakerGets: {
                     value: '0.00001',
@@ -577,12 +580,12 @@ describe('test Transaction', function () {
                 local_sign: true
             });
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret);
+            inst.setSecret(testSecret);
             let testData = {
                 Flags: 0,
                 Fee: 10000,
                 TransactionType: 'OfferCreate',
-                Account: config.testAddress,
+                Account: testAddress,
                 TakerPays: {
                     value: '0.00001',
                     currency: 'CNY',
@@ -612,12 +615,12 @@ describe('test Transaction', function () {
                 local_sign: true
             });
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret.substring(1));
+            inst.setSecret(testSecret.substring(1));
             let testData = {
                 Flags: 0,
                 Fee: 10000,
                 TransactionType: 'OfferCreate',
-                Account: config.testAddress,
+                Account: testAddress,
                 TakerPays: {
                     value: '0.00001',
                     currency: 'CNY',
@@ -641,12 +644,12 @@ describe('test Transaction', function () {
             });
             this.timeout(0)
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret);
+            inst.setSecret(testSecret);
             let testData = {
                 Flags: 0,
                 Fee: 10000,
                 TransactionType: 'OfferCreate',
-                Account: config.testAddress,
+                Account: testAddress,
                 TakerPays: {
                     value: '0.00001',
                     currency: 'CNY',
@@ -675,12 +678,12 @@ describe('test Transaction', function () {
                 local_sign: true
             });
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret);
+            inst.setSecret(testSecret);
             let testData = {
                 Flags: 0,
                 Fee: 10000,
                 TransactionType: 'OfferCreate',
-                Account: config.testAddress,
+                Account: testAddress,
                 TakerPays: {
                     value: '0.00001',
                     currency: 'CNY',
@@ -720,7 +723,7 @@ describe('test Transaction', function () {
                 Flags: 0,
                 Fee: 10000,
                 TransactionType: 'OfferCreate',
-                Account: config.testAddress,
+                Account: testAddress,
                 TakerPays: {
                     value: '0.00001',
                     currency: 'CNY',
@@ -729,7 +732,7 @@ describe('test Transaction', function () {
                 TakerGets: 1000000
             }
             inst.parseJson(testData);
-            inst.setSecret(config.testSecret.substring(1));
+            inst.setSecret(testSecret.substring(1));
             inst.submit(function (error, res) {
                 expect(error).to.not.be.null;
             })
@@ -803,18 +806,18 @@ describe('test Transaction', function () {
                 local_sign: true
             });
             let inst = new Transaction(remote);
-            inst.setSecret(config.testSecret);
+            inst.setSecret(testSecret);
             let testData = {
                 Flags: 0,
                 Fee: 10000,
                 TransactionType: 'Payment',
-                Account: config.testAddress,
+                Account: testAddress,
                 Amount: {
                     "value": 1,
                     "currency": "BIZ",
                     "issuer": "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or"
                 },
-                Destination: config.testDestinationAddress
+                Destination: testDestinationAddress
             }
             inst.parseJson(testData);
             remote.connect((err, res) => {

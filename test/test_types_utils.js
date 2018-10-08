@@ -1,8 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const config = require('./config')
 const TU = require('../lib/TypesUtils');
-const Serializer = require('../lib/Serializer').Serializer
 describe('test TypesUtils', function () {
 
     describe('test get_transaction_type api', function () {

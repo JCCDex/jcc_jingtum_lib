@@ -1,7 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
 const DataCheck = require('../lib/DataCheck');
-const testAddress = require('./config').testAddress
 
 describe('test DataCheck', function () {
     describe('test allNumeric', function () {

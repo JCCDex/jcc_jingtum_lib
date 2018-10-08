@@ -8,7 +8,6 @@ const config = require('./config');
 let {
     JT_NODE,
     testAddress,
-    testSecret,
     testDestinationAddress,
     testCreateHash
 } = config

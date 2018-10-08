@@ -4,7 +4,6 @@ const OrderBook = require('../src/orderbook');
 const Remote = require('../src/remote');
 const config = require('./config');
 const txData = require('./tx_data');
-const sinon = require('sinon');
 let {
     JT_NODE
 } = config

@@ -1,6 +1,5 @@
 const chai = require('chai');
 const expect = chai.expect;
-const config = require('./config')
 const Serializer = require('../lib/Serializer').Serializer
 describe('test Serializer', function () {
     describe('test constructor', function () {

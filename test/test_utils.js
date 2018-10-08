@@ -1,6 +1,10 @@
 const chai = require('chai');
 const expect = chai.expect;
 const config = require('./config')
+const {
+    testAddress,
+    testCreateHash
+} = config
 let utils = require('../src/utils');
 let txData = require('./tx_data');
 describe('test remote', function () {
@@ -224,7 +228,7 @@ describe('test remote', function () {
         })
 
         it('return true if the hash is valid', function () {
-            let valid = utils.isValidHash(config.testCreateHash);
+            let valid = utils.isValidHash(testCreateHash);
             expect(valid).to.equal(true);
         })
     })
@@ -342,117 +346,117 @@ describe('test remote', function () {
 
     describe('test processTx', function () {
         it('check sent', function () {
-            let res = utils.processTx(txData.input1, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input1, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output1)
         })
 
         it('check convert', function () {
-            let res = utils.processTx(txData.input2, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input2, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output2)
         })
 
         it('check received', function () {
-            let res = utils.processTx(txData.input3, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input3, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output3)
         })
 
         it('check trusted', function () {
-            let res = utils.processTx(txData.input4, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input4, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output4)
         })
 
         it('check trusting', function () {
-            let res = utils.processTx(txData.input5, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input5, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output5)
         })
 
         it('check offercancel', function () {
-            let res = utils.processTx(txData.input6, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input6, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output6)
         })
 
         it('check offernew: buy', function () {
-            let res = utils.processTx(txData.input7, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input7, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output7)
         })
 
         it('check offernew: sell', function () {
-            let res = utils.processTx(txData.input8, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input8, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output8)
         })
 
         it('check relationset: freeze', function () {
-            let res = utils.processTx(txData.input9, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input9, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output9)
         })
 
         it('check relationset: authorize', function () {
-            let res = utils.processTx(txData.input10, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input10, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output10)
         })
 
         it('check relationdel: unfreeze', function () {
-            let res = utils.processTx(txData.input11, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input11, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output11)
         })
 
         it('check relationset: unknown', function () {
-            let res = utils.processTx(txData.input12, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input12, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output12)
         })
 
         it('check unknown', function () {
-            let res = utils.processTx(txData.input13, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input13, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output13)
         })
 
         it('check configcontract: deploy', function () {
-            let res = utils.processTx(txData.input14, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input14, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output14)
         })
 
         it('check configcontract: call', function () {
-            let res = utils.processTx(txData.input15, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input15, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output15)
         })
 
         it('check configcontract: method is not 0 or 1', function () {
-            let res = utils.processTx(txData.input16, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input16, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output16)
         })
 
         it('check offereffect: effect is offer_partially_funded', function () {
-            let res = utils.processTx(txData.input17, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input17, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output17)
         })
 
         it('check offereffect: effect is offer_created', function () {
-            let res = utils.processTx(txData.input18, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input18, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output18)
         })
 
         it('check offereffect: effect is offer_funded', function () {
-            let res = utils.processTx(txData.input19, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input19, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output19)
         })
 
         it('check offereffect: effect is offer_cancelled', function () {
-            let res = utils.processTx(txData.input20, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input20, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output20)
         })
 
         it('check offereffect: effect is offer_cancelled and type is offercancel', function () {
-            let res = utils.processTx(txData.input21, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input21, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output21)
         })
 
         it('check offereffect: effect is offer_bought', function () {
-            let res = utils.processTx(txData.input22, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input22, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output22)
         })
 
         it('check offereffect: effect is set_regular_key', function () {
-            let res = utils.processTx(txData.input23, config.testAddress, 'swt');
+            let res = utils.processTx(txData.input23, testAddress, 'swt');
             expect(res).to.deep.equal(txData.output23)
         })
     })
