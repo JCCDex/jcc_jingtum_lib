@@ -23,10 +23,12 @@ function Server(remote, opts) {
             secure: parsed.protocol === 'wss:'
         }
     }
-    if (typeof opts !== 'object') {
+    if (opts === null || typeof opts !== 'object') {
         this.opts = new TypeError('server options not supplied');
         return this;
     }
+
+    // ToFix: undefined, null is true, like 'aaaaa' is also true
     if (!Server.domainRE.test(opts.host)) {
         this.opts_host = new TypeError('server host incorrect');
         return this;
