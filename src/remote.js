@@ -806,7 +806,7 @@ Remote.prototype.deployContractTx = function (options) {
         tx.tx_json.account = new Error('invalid address');
         return tx;
     }
-    if (isNaN(amount)) {
+    if (isNaN(Number(amount))) {
         tx.tx_json.amount = new Error('invalid amount');
         return tx;
     }
@@ -978,9 +978,7 @@ Remote.prototype.__buildTrustSet = function (options, tx) {
 
     tx.tx_json.TransactionType = 'TrustSet';
     tx.tx_json.Account = src;
-    if (limit !== void 0) {
-        tx.tx_json.LimitAmount = limit;
-    }
+    tx.tx_json.LimitAmount = limit;
     if (quality_in) {
         tx.tx_json.QualityIn = quality_in;
     }
@@ -1019,9 +1017,7 @@ Remote.prototype.__buildRelationSet = function (options, tx) {
     tx.tx_json.Account = src;
     tx.tx_json.Target = des;
     tx.tx_json.RelationType = options.type === 'authorize' ? 1 : 3;
-    if (limit !== void 0) {
-        tx.tx_json.LimitAmount = limit;
-    }
+    tx.tx_json.LimitAmount = limit;
     return tx;
 };
 
@@ -1053,8 +1049,6 @@ Remote.prototype.buildRelationTx = function (options) {
         case 'unfreeze':
             return this.__buildRelationSet(options, tx);
     }
-    tx.tx_json.msg = new Error('build relation set should not go here');
-    return tx;
 };
 
 /**
@@ -1161,9 +1155,6 @@ Remote.prototype.buildAccountSetTx = function (options) {
         case 'signer':
             return this.__buildSignerSet(options, tx);
     }
-
-    tx.tx_json.msg = new Error('build account set should not go here');
-    return tx;
 };
 
 /**
@@ -1196,7 +1187,6 @@ Remote.prototype.buildOfferCreateTx = function (options) {
         tx.tx_json.offer_type = new Error('invalid offer type');
         return tx;
     }
-    var taker_gets2, taker_pays2;
     if (typeof taker_gets === 'string' && !Number(taker_gets)) {
         tx.tx_json.taker_gets2 = new Error('invalid to pays amount');
         return tx;
@@ -1222,8 +1212,8 @@ Remote.prototype.buildOfferCreateTx = function (options) {
     if (offer_type === 'Sell') tx.setFlags(offer_type);
     if (app) tx.tx_json.AppType = app;
     tx.tx_json.Account = src;
-    tx.tx_json.TakerPays = taker_pays2 || ToAmount(taker_pays, this._token);
-    tx.tx_json.TakerGets = taker_gets2 || ToAmount(taker_gets, this._token);
+    tx.tx_json.TakerPays = ToAmount(taker_pays, this._token);
+    tx.tx_json.TakerGets = ToAmount(taker_gets, this._token);
 
     return tx;
 };
