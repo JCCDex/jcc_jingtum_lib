@@ -1,5 +1,8 @@
 # About JCC Jingtum lib
 
+[![Build Status](https://travis-ci.com/JCCDex/jcc_jingtum_lib.svg?branch=master)](https://travis-ci.com/JCCDex/jcc_jingtum_lib)
+[![Coverage Status](https://coveralls.io/repos/github/JCCDex/jcc_jingtum_lib/badge.svg?branch=master)](https://coveralls.io/github/JCCDex/jcc_jingtum_lib?branch=master)
+
 Basic js lib to be used for interacting with jingtum blockchain network.
 
 - Keep only one websocket connecttion to jingtum and handle exception

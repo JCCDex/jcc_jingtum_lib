@@ -167,7 +167,7 @@ Each result is one transaction information. The result is as follow
 }
 ```
 
-### requestAccuontInfo(options)
+### requestAccountInfo(options)
 
 It is used to get account info. Options should provie account, and ledger is optional. Options are as follow.
 
