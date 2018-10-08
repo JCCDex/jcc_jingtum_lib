@@ -335,7 +335,7 @@ Remote.prototype.requestLedger = function (options) {
             total_coins: ledger.total_coins
         };
     });
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -375,7 +375,7 @@ Remote.prototype.requestLedger = function (options) {
  */
 Remote.prototype.requestTx = function (options) {
     var request = new Request(this, 'tx');
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -392,7 +392,7 @@ Remote.prototype.requestTx = function (options) {
 
 function getRelationType(type) {
     switch (type) {
-        case 'trustline':
+        case 'trust':
             return 0;
         case 'authorize':
             return 1;
@@ -456,7 +456,7 @@ Remote.prototype.__requestAccount = function (type, options, request, filter) {
 Remote.prototype.requestAccountInfo = function (options) {
     var request = new Request(this);
 
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -477,7 +477,7 @@ Remote.prototype.requestAccountInfo = function (options) {
 Remote.prototype.requestAccountTums = function (options) {
     var request = new Request(this);
 
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -498,7 +498,7 @@ Remote.prototype.requestAccountTums = function (options) {
 Remote.prototype.requestAccountRelations = function (options) {
     var request = new Request(this);
 
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -530,7 +530,7 @@ Remote.prototype.requestAccountRelations = function (options) {
 Remote.prototype.requestAccountOffers = function (options) {
     var request = new Request(this);
 
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -561,7 +561,7 @@ Remote.prototype.requestAccountTx = function (options) {
         return data;
     });
 
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -611,7 +611,7 @@ Remote.prototype.requestAccountTx = function (options) {
  */
 Remote.prototype.requestOrderBook = function (options) {
     var request = new Request(this, 'book_offers');
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -643,7 +643,7 @@ Remote.prototype.requestOrderBook = function (options) {
  * */
 Remote.prototype.requestBrokerage = function (options) {
     var request = new Request(this, 'Fee_Info');
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -700,7 +700,7 @@ Remote.prototype.requestPathFind = function (options) {
         }
         return _result;
     });
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         request.message.type = new Error('invalid options type');
         return request;
     }
@@ -757,7 +757,7 @@ function ToAmount(amount, token) {
  */
 Remote.prototype.buildPaymentTx = function (options) {
     var tx = new Transaction(this);
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         tx.tx_json.obj = new Error('invalid options type');
         return tx;
     }
@@ -794,7 +794,7 @@ Remote.prototype.buildPaymentTx = function (options) {
  */
 Remote.prototype.deployContractTx = function (options) {
     var tx = new Transaction(this);
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         tx.tx_json.obj = new Error('invalid options type');
         return tx;
     }
@@ -845,7 +845,7 @@ Remote.prototype.deployContractTx = function (options) {
  */
 Remote.prototype.callContractTx = function (options) {
     var tx = new Transaction(this);
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         tx.tx_json.obj = new Error('invalid options type');
         return tx;
     }
@@ -893,7 +893,7 @@ Remote.prototype.callContractTx = function (options) {
 
 Remote.prototype.buildSignTx = function (options) {
     var tx = new Transaction(this);
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         tx.tx_json.obj = new Error('invalid options type');
         return tx;
     }
@@ -916,7 +916,7 @@ Remote.prototype.buildSignTx = function (options) {
  */
 Remote.prototype.buildBrokerageTx = function (options) {
     var tx = new Transaction(this);
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         tx.tx_json.obj = new Error('invalid options type');
         return tx;
     }
@@ -1037,7 +1037,7 @@ Remote.prototype.__buildRelationSet = function (options, tx) {
  */
 Remote.prototype.buildRelationTx = function (options) {
     var tx = new Transaction(this);
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         tx.tx_json.obj = new Error('invalid options type');
         return tx;
     }
@@ -1145,7 +1145,7 @@ Remote.prototype.__buildSignerSet = function (options, tx) {
  */
 Remote.prototype.buildAccountSetTx = function (options) {
     var tx = new Transaction(this);
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         tx.tx_json.obj = new Error('invalid options type');
         return tx;
     }
@@ -1177,7 +1177,7 @@ Remote.prototype.buildAccountSetTx = function (options) {
  */
 Remote.prototype.buildOfferCreateTx = function (options) {
     var tx = new Transaction(this);
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         tx.tx_json.obj = new Error('invalid options type');
         return tx;
     }
@@ -1237,7 +1237,7 @@ Remote.prototype.buildOfferCreateTx = function (options) {
  */
 Remote.prototype.buildOfferCancelTx = function (options) {
     var tx = new Transaction(this);
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         tx.tx_json.obj = new Error('invalid options type');
         return tx;
     }
