@@ -5,6 +5,7 @@ const schema = require('./schema');
 const expect = chai.expect;
 const TEST_NODE = 'ws://ts5.jingtum.com:5020'
 const config = require('./config');
+const sinon = require('sinon')
 let {
     JT_NODE,
     testAddress,
@@ -206,16 +207,23 @@ describe('test remote', function () {
             });
         })
 
-        it('should request ledger successfully if the option is empty object', function () {
+        it('should request ledger successfully if the option is empty object', function (done) {
             this.timeout(0);
             let remote = new Remote({
                 server: JT_NODE,
                 local_sign: true,
                 token: 'swt'
             });
-            let req = remote.requestLedger({});
-            expect(req._command).to.equal('ledger');
-            expect(req.message).to.deep.equal({});
+            remote.connect((err, result) => {
+                let req = remote.requestLedger({});
+                expect(req._command).to.equal('ledger');
+                expect(req.message).to.deep.equal({});
+                req.submit((err, result) => {
+                    expect(result).to.be.jsonSchema(schema.LEDGER_SCHEMA)
+                    remote.disconnect();
+                    done()
+                })
+            });
         })
 
         it('throw error if the options is not object', function (done) {
@@ -329,7 +337,6 @@ describe('test remote', function () {
                 token: 'swt'
             });
             let req = remote.requestAccountInfo({
-                account: testAddress,
                 peer: testDestinationAddress,
                 limit: -1,
                 marker: 1,
@@ -338,7 +345,6 @@ describe('test remote', function () {
             });
             expect(req._command).to.equal('account_info');
             expect(req.message).to.deep.equal({
-                account: testAddress,
                 peer: testDestinationAddress,
                 limit: 0,
                 marker: 1,
@@ -636,29 +642,13 @@ describe('test remote', function () {
             });
             remote.connect((err, result) => {
                 let req = remote.requestAccountTx({
-                    account: testAddress,
-                    ledger_min: 1,
-                    ledger_max: 1000,
-                    limit: 10,
-                    offset: 10,
-                    forward: true,
-                    marker: {
-                        ledger: 0,
-                        seq: 0
-                    }
+                    account: testAddress
                 });
                 expect(req._command).to.equal('account_tx');
                 expect(req.message).to.deep.equal({
                     account: testAddress,
-                    ledger_index_min: 1,
-                    ledger_index_max: 1000,
-                    limit: 10,
-                    offset: 10,
-                    forward: true,
-                    marker: {
-                        ledger: 0,
-                        seq: 0
-                    }
+                    ledger_index_min: 0,
+                    ledger_index_max: -1
                 })
                 req.submit((err, result) => {
                     expect(result).to.be.jsonSchema(schema.ACCOUNT_TX_SCHEMA);
@@ -675,14 +665,31 @@ describe('test remote', function () {
                 local_sign: true,
                 token: 'swt'
             });
+
             let req = remote.requestAccountTx({
-                account: testAddress
+                account: testAddress,
+                ledger_min: 1,
+                ledger_max: 1000,
+                limit: 10,
+                offset: 10,
+                forward: true,
+                marker: {
+                    ledger: 0,
+                    seq: 0
+                }
             });
             expect(req._command).to.equal('account_tx');
             expect(req.message).to.deep.equal({
                 account: testAddress,
-                ledger_index_min: 0,
-                ledger_index_max: -1
+                ledger_index_min: 1,
+                ledger_index_max: 1000,
+                limit: 10,
+                offset: 10,
+                forward: true,
+                marker: {
+                    ledger: 0,
+                    seq: 0
+                }
             })
         })
 
@@ -2546,6 +2553,181 @@ describe('test remote', function () {
             expect(req.message).to.deep.equal({
                 streams: ['transactions', 'ledger']
             })
+        })
+    })
+
+    describe('test _handleMessage', function () {
+        it('if the data is not object', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            let s1 = sinon.spy(remote, '_handleLedgerClosed')
+            let s2 = sinon.spy(remote, '_handleServerStatus')
+            let s3 = sinon.spy(remote, '_handleResponse')
+            let s4 = sinon.spy(remote, '_handleTransaction')
+            let s5 = sinon.spy(remote, '_handlePathFind')
+            remote._handleMessage('aaaa')
+            expect(s1.called).to.equal(false);
+            expect(s2.called).to.equal(false);
+            expect(s3.called).to.equal(false);
+            expect(s4.called).to.equal(false);
+            expect(s5.called).to.equal(false);
+        })
+
+        it('if the type is ledgerClosed', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            let s1 = sinon.spy(remote, '_handleLedgerClosed')
+            let s2 = sinon.spy(remote, '_handleServerStatus')
+            let s3 = sinon.spy(remote, '_handleResponse')
+            let s4 = sinon.spy(remote, '_handleTransaction')
+            let s5 = sinon.spy(remote, '_handlePathFind')
+            remote._handleMessage({
+                type: 'ledgerClosed'
+            })
+            expect(s1.calledOnce).to.equal(true);
+            expect(s2.called).to.equal(false);
+            expect(s3.called).to.equal(false);
+            expect(s4.called).to.equal(false);
+            expect(s5.called).to.equal(false);
+        })
+
+        it('if the type is serverStatus', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            let s1 = sinon.spy(remote, '_handleLedgerClosed')
+            let s2 = sinon.spy(remote, '_handleServerStatus')
+            let s3 = sinon.spy(remote, '_handleResponse')
+            let s4 = sinon.spy(remote, '_handleTransaction')
+            let s5 = sinon.spy(remote, '_handlePathFind')
+            remote._handleMessage({
+                type: 'serverStatus'
+            })
+            expect(s1.called).to.equal(false);
+            expect(s2.calledOnce).to.equal(true);
+            expect(s3.called).to.equal(false);
+            expect(s4.called).to.equal(false);
+            expect(s5.called).to.equal(false);
+        })
+
+        it('if the type is response', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            let s1 = sinon.spy(remote, '_handleLedgerClosed')
+            let s2 = sinon.spy(remote, '_handleServerStatus')
+            let s3 = sinon.spy(remote, '_handleResponse')
+            let s4 = sinon.spy(remote, '_handleTransaction')
+            let s5 = sinon.spy(remote, '_handlePathFind')
+            remote._handleMessage({
+                type: 'response'
+            })
+            expect(s1.called).to.equal(false);
+            expect(s2.called).to.equal(false);
+            expect(s3.calledOnce).to.equal(true);
+            expect(s4.called).to.equal(false);
+            expect(s5.called).to.equal(false);
+        })
+
+        it('if the type is transaction', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            let s1 = sinon.spy(remote, '_handleLedgerClosed')
+            let s2 = sinon.spy(remote, '_handleServerStatus')
+            let s3 = sinon.spy(remote, '_handleResponse')
+            let s4 = sinon.spy(remote, '_handleTransaction')
+            let s5 = sinon.spy(remote, '_handlePathFind')
+            remote._handleMessage({
+                type: 'transaction',
+                transaction: {
+                    hash: '111'
+                }
+            })
+            expect(s1.called).to.equal(false);
+            expect(s2.called).to.equal(false);
+            expect(s3.called).to.equal(false);
+            expect(s4.calledOnce).to.equal(true);
+            expect(s5.called).to.equal(false);
+        })
+
+        it('if the type is path_find', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            let s1 = sinon.spy(remote, '_handleLedgerClosed')
+            let s2 = sinon.spy(remote, '_handleServerStatus')
+            let s3 = sinon.spy(remote, '_handleResponse')
+            let s4 = sinon.spy(remote, '_handleTransaction')
+            let s5 = sinon.spy(remote, '_handlePathFind')
+            remote._handleMessage({
+                type: 'path_find'
+            })
+            expect(s1.called).to.equal(false);
+            expect(s2.called).to.equal(false);
+            expect(s3.called).to.equal(false);
+            expect(s4.called).to.equal(false);
+            expect(s5.calledOnce).to.equal(true);
+        })
+    })
+
+    describe('test _handleTransaction', function () {
+        it('if the ledger index of data is more than ledger index of _status', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            let spy = sinon.spy(remote, 'emit');
+            let data = {
+                ledger_index: 1,
+                ledger_time: 0,
+                reserve_base: 0,
+                reserve_inc: 'aaa',
+                fee_base: 1,
+                fee_ref: 2
+            }
+            remote._handleLedgerClosed(data);
+            expect(remote._status).to.deep.equal(data);
+            expect(spy.calledOnce).to.equal(true);
+            expect(spy.args[0][0]).to.equal('ledger_closed');
+            expect(spy.args[0][1]).to.deep.equal(data)
+        })
+
+        it('if the ledger index of data is not more than ledger index of _status', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            let spy = sinon.spy(remote, 'emit');
+            let data = {
+                ledger_index: 0,
+                ledger_time: 0,
+                reserve_base: 0,
+                reserve_inc: 'aaa',
+                fee_base: 1,
+                fee_ref: 2
+            }
+            remote._handleLedgerClosed(data);
+            expect(remote._status).to.deep.equal({
+                ledger_index: 0
+            });
+            expect(spy.calledOnce).to.equal(false);
         })
     })
 });
