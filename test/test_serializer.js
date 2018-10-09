@@ -298,4 +298,52 @@ describe('test Serializer', function () {
             expect(() => Serializer.from_json({}, 'swt')).to.throw('Object to be serialized must contain either TransactionType, LedgerEntryType or AffectedNodes.')
         })
     })
+
+    describe('test to_json', function () {
+        it('return output', function () {
+            let ser = new Serializer([18, 0, 3])
+            let output = ser.to_json()
+            expect(output).to.deep.equal({
+                TransactionType: 'AccountSet'
+            })
+        })
+    })
+
+    describe('test check_no_missing_fields', function () {
+        it('throw error if the TransactionType is not empty', function () {
+            let typedef = [
+                ['aa', 0]
+            ]
+            let obj = {
+                TransactionType: 'AccountSet'
+            }
+            expect(() => Serializer.check_no_missing_fields(typedef, obj)).to.throw()
+        })
+
+        it('throw error if the LedgerEntryType is not empty', function () {
+            let typedef = [
+                ['aa', 0]
+            ]
+            let obj = {
+                LedgerEntryType: 'AccountRoot'
+            }
+            expect(() => Serializer.check_no_missing_fields(typedef, obj)).to.throw()
+        })
+
+        it('throw error if other case', function () {
+            let typedef = [
+                ['aa', 0]
+            ]
+            let obj = {}
+            expect(() => Serializer.check_no_missing_fields(typedef, obj)).to.throw()
+        })
+
+        it('not throw error', function () {
+            let typedef = [
+                ['aa', 1]
+            ]
+            let obj = {}
+            expect(() => Serializer.check_no_missing_fields(typedef, obj)).to.not.throw()
+        })
+    })
 });
