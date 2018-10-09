@@ -658,17 +658,14 @@ describe('test Transaction', function () {
                 TakerGets: 1000000
             }
             inst.parseJson(testData);
-            remote.connect((err, res) => {
-                let stub = sinon.stub(Request.prototype, "submit");
-                stub.yields(new Error('error'))
-                inst.sign(function (err, hash) {
-                    expect(err).to.be.an('error');
-                    expect(err.message).to.equal('error');
-                    expect(hash).to.equal(undefined);
-                    remote.disconnect();
-                    stub.restore();
-                    done()
-                })
+            let stub = sinon.stub(Request.prototype, "submit");
+            stub.yields(new Error('error'))
+            inst.sign(function (err, hash) {
+                expect(err).to.be.an('error');
+                expect(err.message).to.equal('error');
+                expect(hash).to.equal(undefined);
+                stub.restore();
+                done()
             })
         })
 
@@ -692,21 +689,18 @@ describe('test Transaction', function () {
                 TakerGets: 1000000
             }
             inst.parseJson(testData);
-            remote.connect((err, res) => {
-                let stub = sinon.stub(Request.prototype, "submit");
-                stub.yields(null, {
-                    account_data: {
-                        Sequence: 200
-                    }
-                })
-                inst.sign(function (err, hash) {
-                    expect(err).to.be.null;
-                    expect(testData.Sequence).to.equal(200)
-                    expect(hash).to.be.a('string');
-                    stub.restore();
-                    remote.disconnect();
-                    done()
-                })
+            let stub = sinon.stub(Request.prototype, "submit");
+            stub.yields(null, {
+                account_data: {
+                    Sequence: 200
+                }
+            })
+            inst.sign(function (err, hash) {
+                expect(err).to.be.null;
+                expect(testData.Sequence).to.equal(200)
+                expect(hash).to.be.a('string');
+                stub.restore();
+                done()
             })
         })
     })
@@ -738,28 +732,29 @@ describe('test Transaction', function () {
             })
         })
 
-        it('if the TransactionType is Singer', function (done) {
+        it('the TransactionType is Singer', function () {
             this.timeout(0)
             let remote = new Remote({
                 server: JT_NODE,
                 local_sign: true
             });
             let inst = new Transaction(remote);
-
+            let spy = sinon.spy(inst._remote, '_submit');
             let testData = {
                 TransactionType: 'Signer',
                 blob: '1111'
             }
             inst.parseJson(testData);
-            remote.connect((err, res) => {
-                inst.submit(function (error, res) {
-                    remote.disconnect()
-                    done()
-                })
+            inst.submit()
+            expect(spy.callCount).to.equal(1)
+            let args = spy.args[0]
+            expect(args[0]).to.equal('submit');
+            expect(args[1]).to.deep.equal({
+                tx_blob: '1111'
             })
         })
 
-        it('if is local sign', function (done) {
+        it('it is local sign but throw error', function (done) {
             this.timeout(0)
             let remote = new Remote({
                 server: JT_NODE,
@@ -767,43 +762,63 @@ describe('test Transaction', function () {
             });
             let inst = new Transaction(remote);
             let testData = {
-                blob: '1111'
+                Flags: 0,
+                Fee: 10000,
+                TransactionType: 'Payment',
+                Account: testAddress,
+                Amount: {
+                    "value": 1,
+                    "currency": "BIZ",
+                    "issuer": "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or"
+                },
+                Destination: testDestinationAddress,
+                Sequence: 2
             }
             inst.parseJson(testData);
-            remote.connect((err, res) => {
-                inst.submit(function (error, res) {
-                    remote.disconnect()
-                    done()
-                })
+            inst._secret = testSecret.substring(1);
+            inst.submit(function (error, res) {
+                expect(error).to.not.be.null
+                done()
             })
-
         })
 
-        it('if is not local_sign and signer', function (done) {
+        it('it is local_sign and success', function () {
             this.timeout(0)
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true
+            });
+            let inst = new Transaction(remote);
+            let testData = {
+                Flags: 0,
+                Fee: 10000,
+                TransactionType: 'Payment',
+                Account: testAddress,
+                Amount: {
+                    "value": 1,
+                    "currency": "BIZ",
+                    "issuer": "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or"
+                },
+                Destination: testDestinationAddress,
+                Sequence: 2
+            }
+            inst.parseJson(testData);
+            let spy = sinon.spy(inst._remote, '_submit');
+            inst.setSecret(testSecret)
+            inst.submit();
+            expect(spy.callCount).to.equal(1)
+            let args = spy.args[0]
+            expect(args[0]).to.equal('submit');
+            expect(args[1]).to.deep.equal({
+                tx_blob: '1200002200000000240000000261D4838D7EA4C6800000000000000000000000000042495A0000000000A582E432BFC48EEDEF852C814EC57F3CD2D415966840000000000027107321030FC8DDB7C7CBB7E2D031B82D480C8B90692DCDF142B229CC18C544C09BD66FBE7447304502210086D45420D762AC58C0618F208A818F6492946094C562841927D02D9CA461941502205CEE7E0FEB5C39C33EA4553ABFB5995999B584789406B104154A168627692F97811463A31FAC5F1C04F178F91FDA67529E4046028A3F8314DC1093EC3D8D371D6803FABE2B01C82F3EFAEE47'
+            })
+        })
+
+
+        it('if is not local_sign and signer', function () {
             let remote = new Remote({
                 server: JT_NODE,
                 local_sign: false
-            });
-            let inst = new Transaction(remote);
-            let testData = {
-                blob: '1111'
-            }
-            inst.parseJson(testData);
-            remote.connect((err, res) => {
-                inst.submit(function (error, res) {
-                    remote.disconnect()
-                    done()
-                })
-            })
-
-        })
-
-
-        it('if is not local_sign and signer', function (done) {
-            let remote = new Remote({
-                server: JT_NODE,
-                local_sign: true
             });
             let inst = new Transaction(remote);
             inst.setSecret(testSecret);
@@ -820,11 +835,14 @@ describe('test Transaction', function () {
                 Destination: testDestinationAddress
             }
             inst.parseJson(testData);
-            remote.connect((err, res) => {
-                inst.submit(function (err, hash) {
-                    done()
-                    remote.disconnect()
-                })
+            let spy = sinon.spy(inst._remote, '_submit');
+            inst.submit();
+            expect(spy.callCount).to.equal(1);
+            let args = spy.args[0]
+            expect(args[0]).to.equal('submit');
+            expect(args[1]).to.deep.equal({
+                secret: testSecret,
+                tx_json: testData
             })
         })
     })
