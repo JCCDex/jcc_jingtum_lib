@@ -11,7 +11,7 @@ let {
 } = config
 let pair = 'SWT:JJCC/jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or'
 
-describe('test TypesUtils', function () {
+describe('test orderbook', function () {
     describe('test constructor', function () {
         it('if the given token is empty', function () {
             let remote = new Remote({

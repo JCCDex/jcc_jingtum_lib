@@ -11,7 +11,7 @@ let {
     testAddress
 } = config
 
-describe('test TypesUtils', function () {
+describe('test account', function () {
     describe('test constructor', function () {
         it('if the given token is empty', function () {
             let remote = new Remote({
