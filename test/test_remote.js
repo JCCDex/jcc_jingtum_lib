@@ -4,6 +4,7 @@ const Remote = require('../src/remote');
 const schema = require('./schema');
 const expect = chai.expect;
 const TEST_NODE = 'ws://ts5.jingtum.com:5020'
+const Request = require('../src/request');
 const config = require('./config');
 const sinon = require('sinon')
 let {
@@ -2728,6 +2729,149 @@ describe('test remote', function () {
                 ledger_index: 0
             });
             expect(spy.calledOnce).to.equal(false);
+        })
+    })
+
+    describe('test newListener', function () {
+        it('if the type is removeListener', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            remote._server._connected = true
+            let s1 = sinon.spy(remote, 'subscribe');
+            let s2 = sinon.spy(Request.prototype, 'submit');
+            let callback = function () {};
+            remote.on('removeListener', callback);
+            remote.emit('removeListener', callback);
+            expect(s1.called).to.equal(false);
+            expect(s2.called).to.equal(false);
+            sinon.restore()
+        })
+
+        it('if the type is transactions', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            remote._server._connected = true
+            let s1 = sinon.spy(remote, 'subscribe');
+            let s2 = sinon.spy(Request.prototype, 'submit');
+            let callback = function () {};
+            remote.on('transactions', callback);
+            remote.emit('transactions', callback);
+            expect(s1.calledOnce).to.equal(true);
+            expect(s1.args[0][0]).to.equal('transactions')
+            expect(s2.calledOnce).to.equal(true);
+            sinon.restore()
+        })
+
+        it('if the type is ledger_closed', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            remote._server._connected = true
+            let s1 = sinon.spy(remote, 'subscribe');
+            let s2 = sinon.spy(Request.prototype, 'submit');
+            let callback = function () {};
+            remote.on('ledger_closed', callback);
+            remote.emit('ledger_closed', callback);
+            expect(s1.calledOnce).to.equal(true);
+            expect(s1.args[0][0]).to.equal('ledger')
+            expect(s2.calledOnce).to.equal(true);
+            sinon.restore()
+        })
+
+        it('if the type is others', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            remote._server._connected = true
+            let s1 = sinon.spy(remote, 'subscribe');
+            let s2 = sinon.spy(Request.prototype, 'submit');
+            let callback = function () {};
+            remote.on('test', callback);
+            remote.emit('test', callback);
+            expect(s1.called).to.equal(false);
+            expect(s2.called).to.equal(false);
+            sinon.restore()
+        })
+    })
+
+    describe('test removeListener', function () {
+        it('if it is not connected', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            let s1 = sinon.spy(remote, 'unsubscribe');
+            let s2 = sinon.spy(Request.prototype, 'submit');
+            let callback = function () {};
+            remote.on('transactions', callback)
+            remote.removeListener('transactions', callback);
+            expect(s1.called).to.equal(false);
+            expect(s2.called).to.equal(false);
+            sinon.restore()
+        })
+
+        it('if the type is transactions', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            remote._server._connected = true
+            let s1 = sinon.spy(remote, 'unsubscribe');
+            let s2 = sinon.spy(Request.prototype, 'submit');
+            let callback = function () {};
+            remote.on('transactions', callback)
+            remote.removeListener('transactions', callback);
+            expect(s1.calledOnce).to.equal(true);
+            expect(s1.args[0][0]).to.equal('transactions')
+            expect(s2.calledTwice).to.equal(true)
+            sinon.restore()
+        })
+
+        it('if the type is others', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            remote._server._connected = true
+            let s1 = sinon.spy(remote, 'unsubscribe');
+            let s2 = sinon.spy(Request.prototype, 'submit');
+            let callback = function () {};
+            remote.on('test', callback);
+            remote.removeListener('test', callback);
+            expect(s1.called).to.equal(false);
+            expect(s2.called).to.equal(false);
+            sinon.restore();
+        })
+
+        it('if the type is ledger_closed', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            remote._server._connected = true
+            let s1 = sinon.spy(remote, 'unsubscribe');
+            let s2 = sinon.spy(Request.prototype, 'submit');
+            let callback = function () {};
+            remote.on('ledger_closed', callback);
+            remote.removeListener('ledger_closed', callback);
+            expect(s1.calledOnce).to.equal(true);
+            expect(s1.args[0][0]).to.equal('ledger')
+            expect(s2.calledTwice).to.equal(true)
+            sinon.restore()
         })
     })
 });
