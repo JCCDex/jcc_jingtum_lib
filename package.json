@@ -56,12 +56,17 @@
   },
   "scripts": {
     "test": "gulp eslint",
+    "deploy": "./publish.sh",
     "coveralls": "cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
-  "version": "1.4.1",
+  "version": "1.4.2",
   "author": "JCCDex",
   "bugs": {
     "url": "https://github.com/JCCDex/jcc_jingtum_lib/issues"
   },
-  "homepage": "https://github.com/JCCDex/jcc_jingtum_lib#readme"
+  "homepage": "https://github.com/JCCDex/jcc_jingtum_lib#readme",
+  "files": [
+    "src",
+    "lib"
+  ]
 }
