@@ -3,7 +3,8 @@
  */
 var extend = require('extend');
 var Wallet = require('jcc_jingtum_base_lib').Wallet;
-var _ = require('lodash');
+var _extend = require('lodash/extend');
+var _isEmpty = require('lodash/isEmpty');
 var utf8 = require('utf8');
 var configs = require('./config');
 var Bignumber = require('bignumber.js');
@@ -216,7 +217,7 @@ function processAffectNode(an) {
     result.entryType = an.LedgerEntryType;
     result.ledgerIndex = an.LedgerIndex;
 
-    result.fields = _.extend({}, an.PreviousFields, an.NewFields, an.FinalFields);
+    result.fields = _extend({}, an.PreviousFields, an.NewFields, an.FinalFields);
     result.fieldsPrev = an.PreviousFields || {};
     result.fieldsNew = an.NewFields || {};
     result.fieldsFinal = an.FinalFields || {};
@@ -575,7 +576,7 @@ function processTx(txn, account, token) {
                     }
                 }
                 effect.seq = node.fields.Sequence;
-            } else if (tx.Account === account && !_.isEmpty(node.fieldsPrev)) {
+            } else if (tx.Account === account && !_isEmpty(node.fieldsPrev)) {
                 // 5. offer_bought
                 effect.effect = 'offer_bought';
                 effect.counterparty = {
@@ -610,7 +611,7 @@ function processTx(txn, account, token) {
         }
 
         // add effect
-        if (!_.isEmpty(effect)) {
+        if (!_isEmpty(effect)) {
             if (node.diffType === 'DeletedNode' && effect.effect !== 'offer_bought') {
                 effect.deleted = true;
             }

@@ -10,7 +10,7 @@ var Account = require('./account');
 var Transaction = require('./transaction');
 var OrderBook = require('./orderbook');
 var utils = require('./utils');
-var _ = require('lodash');
+var _isNumber = require('lodash/isNumber');
 var Bignumber = require('bignumber.js');
 
 /**
@@ -625,7 +625,7 @@ Remote.prototype.requestOrderBook = function (options) {
         request.message.taker_pays = new Error('invalid taker pays amount');
         return request;
     }
-    if (_.isNumber(options.limit)) {
+    if (_isNumber(options.limit)) {
         options.limit = parseInt(options.limit);
     }
 
