@@ -15,22 +15,24 @@ let {
 
 describe('test Transaction', function () {
     describe('test constructor', function () {
-        let remote = new Remote({
-            server: JT_NODE,
-            local_sign: true
-        });
-        remote._token = null;
-        let inst = new Transaction(remote);
-        expect(inst._token).to.equal('swt');
-        expect(inst._remote instanceof Remote).to.equal(true);
-        expect(inst.tx_json).to.deep.equal({
-            Flags: 0,
-            Fee: 10000
+        it('constructor', function () {
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true
+            });
+            remote._token = null;
+            let inst = new Transaction(remote);
+            expect(inst._token).to.equal('swt');
+            expect(inst._remote instanceof Remote).to.equal(true);
+            expect(inst.tx_json).to.deep.equal({
+                Flags: 0,
+                Fee: 10000
+            })
+            expect(inst._filter instanceof Function).to.equal(true)
+            expect(inst instanceof Event).to.equal(true)
+            expect(inst._secret).to.equal(undefined);
+            expect(inst._filter('a')).to.equal('a')
         })
-        expect(inst._filter instanceof Function).to.equal(true)
-        expect(inst instanceof Event).to.equal(true)
-        expect(inst._secret).to.equal(undefined);
-        expect(inst._filter('a')).to.equal('a')
     })
 
     describe('test parseJson', function () {

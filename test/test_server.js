@@ -211,6 +211,7 @@ describe('test server', function () {
 
         it('if the _state is online and timer is 0', function (done) {
             this.timeout(0)
+            this.retries(5);
             let remote = new Remote({
                 server: JT_NODE,
                 local_sign: true
