@@ -711,5 +711,5 @@ module.exports = {
     getFee: getFee,
     getAccountZero: getAccountZero,
     getAccountOne: getAccountOne,
-    parseKey
+    parseKey: parseKey
 };
