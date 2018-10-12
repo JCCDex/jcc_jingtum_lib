@@ -10,11 +10,11 @@ var jser = require('../lib/Serializer').Serializer;
  * @param remote
  * @constructor
  */
-function Transaction(remote, filter, token) {
+function Transaction(remote, filter) {
     Event.call(this);
 
     var self = this;
-    self._token = token || 'swt';
+    self._token = remote._token || 'swt';
     var fee = utils.getFee(self._token);
     self._remote = remote;
     self.tx_json = {
