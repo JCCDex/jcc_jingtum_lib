@@ -830,11 +830,9 @@ describe('test Transaction', function () {
             expect(spy.callCount).to.equal(1)
             let args = spy.args[0]
             expect(args[0]).to.equal('submit');
-            expect(args[1]).to.deep.equal({
-                tx_blob: '1200002200000000240000000261D4838D7EA4C6800000000000000000000000000042495A0000000000A582E432BFC48EEDEF852C814EC57F3CD2D415966840000000000027107321030FC8DDB7C7CBB7E2D031B82D480C8B90692DCDF142B229CC18C544C09BD66FBE7447304502210086D45420D762AC58C0618F208A818F6492946094C562841927D02D9CA461941502205CEE7E0FEB5C39C33EA4553ABFB5995999B584789406B104154A168627692F97811463A31FAC5F1C04F178F91FDA67529E4046028A3F8314DC1093EC3D8D371D6803FABE2B01C82F3EFAEE47'
-            })
+            expect(args[1]).to.to.have.all.keys(['tx_blob'])
+            expect(args[1].tx_blob).to.be.a('string');
         })
-
 
         it('if is not local_sign and signer', function () {
             let remote = new Remote({
