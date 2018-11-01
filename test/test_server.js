@@ -28,11 +28,12 @@ describe('test server', function () {
             expect(server._state).to.equal('offline');
             expect(server._id).to.equal(0);
             expect(server._timer).to.equal(0);
-            expect(server._url).to.equal(`wss://${server._opts.host}:${server._opts.port}`)
+            expect(server._url).to.equal(JT_NODE)
             expect(server._opts).to.deep.equal({
                 host: parsed.hostname,
                 port: Number(parsed.port),
-                secure: parsed.protocol === 'wss:'
+                secure: parsed.protocol === 'wss:',
+                path: null
             })
         })
 
@@ -50,11 +51,12 @@ describe('test server', function () {
             expect(server._state).to.equal('offline');
             expect(server._id).to.equal(0);
             expect(server._timer).to.equal(0);
-            expect(server._url).to.equal(`ws://${server._opts.host}:${server._opts.port}`)
+            expect(server._url).to.equal(TEST_NODE)
             expect(server._opts).to.deep.equal({
                 host: parsed.hostname,
                 port: Number(parsed.port),
-                secure: parsed.protocol === 'wss:'
+                secure: parsed.protocol === 'wss:',
+                path: null
             })
         })
 

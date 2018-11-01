@@ -19,8 +19,9 @@ function Server(remote, opts) {
         var parsed = url.parse(opts);
         opts = {
             host: parsed.hostname,
-            port: parsed.port,
-            secure: parsed.protocol === 'wss:'
+            port: Number(parsed.port) || 443,
+            secure: parsed.protocol === 'wss:',
+            path: parsed.path
         }
     }
     if (opts === null || typeof opts !== 'object') {
@@ -33,7 +34,7 @@ function Server(remote, opts) {
         this.opts_host = new TypeError('server host incorrect');
         return this;
     }
-    if (!(opts.port = Number(opts.port))) {
+    if (Number.isNaN(opts.port) || !Number.isFinite(opts.port)) {
         this.port = new TypeError('server port not a number');
         return this;
     }
@@ -45,8 +46,7 @@ function Server(remote, opts) {
         opts.secure = false;
     }
     this._opts = opts;
-    this._url = (this._opts.secure ? 'wss://' : 'ws://') +
-        this._opts.host + ':' + this._opts.port;
+    this._url = (this._opts.secure ? 'wss://' : 'ws://') + this._opts.host + ':' + this._opts.port + (this._opts.path ? this._opts.path : '');
     this._remote = remote;
 
     this._ws = null;
