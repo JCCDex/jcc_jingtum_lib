@@ -19,7 +19,7 @@ function Server(remote, opts) {
         var parsed = url.parse(opts);
         opts = {
             host: parsed.hostname,
-            port: Number(parsed.port) || 443,
+            port: parsed.port ? Number(parsed.port) : 443,
             secure: parsed.protocol === 'wss:',
             path: parsed.path
         }

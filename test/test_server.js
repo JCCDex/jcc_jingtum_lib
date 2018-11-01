@@ -37,6 +37,30 @@ describe('test server', function () {
             })
         })
 
+        it('if server address has path', function () {
+            let testAddress = "wss://test.net/bc/ws"
+            let remote = new Remote({
+                server: testAddress,
+                local_sign: true
+            });
+            let server = new Server(remote, testAddress);
+            let parsed = url.parse(testAddress)
+            expect(server._remote instanceof Remote).to.equal(true);
+            expect(server._ws).to.equal(null);
+            expect(server._connected).to.equal(false);
+            expect(server._opened).to.equal(false);
+            expect(server._state).to.equal('offline');
+            expect(server._id).to.equal(0);
+            expect(server._timer).to.equal(0);
+            expect(server._url).to.equal("wss://test.net:443/bc/ws")
+            expect(server._opts).to.deep.equal({
+                host: parsed.hostname,
+                port: 443,
+                secure: parsed.protocol === 'wss:',
+                path: "/bc/ws"
+            })
+        })
+
         it('if this is not secure', function () {
             let remote = new Remote({
                 server: TEST_NODE,
@@ -90,6 +114,13 @@ describe('test server', function () {
             let server = new Server(remote, {
                 host: 'ts5.jingtum.com',
                 port: 'aaa'
+            });
+            expect(server.port).to.be.an('error');
+            expect(server.port.message).to.equal('server port not a number')
+
+            server = new Server(remote, {
+                host: 'ts5.jingtum.com',
+                port: Infinity
             });
             expect(server.port).to.be.an('error');
             expect(server.port.message).to.equal('server port not a number')
