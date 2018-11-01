@@ -62,12 +62,13 @@ describe('test server', function () {
         })
 
         it('if this is not secure', function () {
+            let testNode = 'ws://test.com'
             let remote = new Remote({
-                server: TEST_NODE,
+                server: testNode,
                 local_sign: true
             });
-            let server = new Server(remote, TEST_NODE);
-            let parsed = url.parse(TEST_NODE)
+            let server = new Server(remote, testNode);
+            let parsed = url.parse(testNode)
             expect(server._remote instanceof Remote).to.equal(true);
             expect(server._ws).to.equal(null);
             expect(server._connected).to.equal(false);
@@ -75,11 +76,11 @@ describe('test server', function () {
             expect(server._state).to.equal('offline');
             expect(server._id).to.equal(0);
             expect(server._timer).to.equal(0);
-            expect(server._url).to.equal(TEST_NODE)
+            expect(server._url).to.equal('ws://test.com:80')
             expect(server._opts).to.deep.equal({
                 host: parsed.hostname,
-                port: Number(parsed.port),
-                secure: parsed.protocol === 'wss:',
+                port: 80,
+                secure: false,
                 path: null
             })
         })

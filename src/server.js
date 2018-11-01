@@ -17,10 +17,11 @@ function Server(remote, opts) {
 
     if (typeof opts === 'string') {
         var parsed = url.parse(opts);
+        var secure = parsed.protocol === 'wss:';
         opts = {
             host: parsed.hostname,
-            port: parsed.port ? Number(parsed.port) : 443,
-            secure: parsed.protocol === 'wss:',
+            port: parsed.port ? Number(parsed.port) : secure ? 443 : 80,
+            secure: secure,
             path: parsed.path
         }
     }
