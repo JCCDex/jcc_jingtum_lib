@@ -2,7 +2,7 @@
 var util = require('util');
 var url = require('url');
 var Event = require('events').EventEmitter;
-var WS = require('ws');
+var WS = require('isomorphic-ws');
 var extend = require('extend');
 
 /**
@@ -73,20 +73,22 @@ Server.prototype.connect = function (callback) {
         return callback(e);
     }
 
-    self._ws.on('open', function () {
+    self._ws.onopen = function open() {
         self._opened = true;
         var req = self._remote.subscribe(['ledger', 'server']);
         req.submit(callback);
-    });
-    self._ws.on('message', function (data) {
-        self._remote._handleMessage(data);
-    });
-    self._ws.on('close', function () {
+    };
+
+    self._ws.onclose = function close() {
         self._handleClose();
-    });
-    self._ws.on('error', function (err) {
+    };
+    self._ws.onerror = function error(err) {
         callback(err);
-    });
+    };
+
+    self._ws.onmessage = function message(e) {
+        self._remote._handleMessage(e);
+    };
 };
 
 /**
@@ -94,6 +96,7 @@ Server.prototype.connect = function (callback) {
  */
 Server.prototype.disconnect = function () {
     this._ws.close();
+    this._ws = null;
     this._setState('offline');
 };
 

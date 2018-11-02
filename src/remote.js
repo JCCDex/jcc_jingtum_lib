@@ -106,10 +106,11 @@ Remote.prototype.isConnected = function () {
  * @param data
  * @private
  */
-Remote.prototype._handleMessage = function (data) {
+Remote.prototype._handleMessage = function (e) {
     var self = this;
+    var data;
     try {
-        data = JSON.parse(data);
+        data = JSON.parse(e.data);
     } catch (e) {}
     if (typeof data !== 'object') return;
 

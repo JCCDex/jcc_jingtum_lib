@@ -182,6 +182,7 @@ describe('test server', function () {
                 expect(spy.callCount).to.equal(0);
                 expect(id).to.equal(undefined)
                 remote.disconnect();
+                expect(remote._server._ws).to.equal(null);
                 done()
             })
         })

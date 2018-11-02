@@ -3,6 +3,7 @@
     "bignumber.js": "^5.0.0",
     "bn-plus.js": "^1.0.0",
     "extend": "^3.0.0",
+    "isomorphic-ws": "^4.0.1",
     "jcc_jingtum_base_lib": "^1.0.9",
     "jsbn": "^1.1.0",
     "lodash": "^4.17.2",
@@ -59,7 +60,7 @@
     "deploy": "./publish.sh",
     "coveralls": "cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
-  "version": "1.4.6",
+  "version": "1.4.7",
   "author": "JCCDex",
   "bugs": {
     "url": "https://github.com/JCCDex/jcc_jingtum_lib/issues"

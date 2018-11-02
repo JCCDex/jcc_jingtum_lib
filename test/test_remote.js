@@ -2589,7 +2589,9 @@ describe('test remote', function () {
             let s4 = sinon.spy(remote, '_handleTransaction')
             let s5 = sinon.spy(remote, '_handlePathFind')
             remote._handleMessage({
-                type: 'ledgerClosed'
+                data: JSON.stringify({
+                    type: 'ledgerClosed'
+                })
             })
             expect(s1.calledOnce).to.equal(true);
             expect(s2.called).to.equal(false);
@@ -2610,7 +2612,9 @@ describe('test remote', function () {
             let s4 = sinon.spy(remote, '_handleTransaction')
             let s5 = sinon.spy(remote, '_handlePathFind')
             remote._handleMessage({
-                type: 'serverStatus'
+                data: JSON.stringify({
+                    type: 'serverStatus'
+                })
             })
             expect(s1.called).to.equal(false);
             expect(s2.calledOnce).to.equal(true);
@@ -2631,7 +2635,9 @@ describe('test remote', function () {
             let s4 = sinon.spy(remote, '_handleTransaction')
             let s5 = sinon.spy(remote, '_handlePathFind')
             remote._handleMessage({
-                type: 'response'
+                data: JSON.stringify({
+                    type: 'response'
+                })
             })
             expect(s1.called).to.equal(false);
             expect(s2.called).to.equal(false);
@@ -2652,10 +2658,12 @@ describe('test remote', function () {
             let s4 = sinon.spy(remote, '_handleTransaction')
             let s5 = sinon.spy(remote, '_handlePathFind')
             remote._handleMessage({
-                type: 'transaction',
-                transaction: {
-                    hash: '111'
-                }
+                data: JSON.stringify({
+                    type: 'transaction',
+                    transaction: {
+                        hash: '111'
+                    }
+                })
             })
             expect(s1.called).to.equal(false);
             expect(s2.called).to.equal(false);
@@ -2676,7 +2684,9 @@ describe('test remote', function () {
             let s4 = sinon.spy(remote, '_handleTransaction')
             let s5 = sinon.spy(remote, '_handlePathFind')
             remote._handleMessage({
-                type: 'path_find'
+                data: JSON.stringify({
+                    type: 'path_find'
+                })
             })
             expect(s1.called).to.equal(false);
             expect(s2.called).to.equal(false);
