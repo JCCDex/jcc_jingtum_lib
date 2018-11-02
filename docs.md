@@ -46,7 +46,7 @@ options for setup a remote, options including
 }
 ```
 
-`server` is string for jingtum websocket server url, `local_sign` checks if jcc_jingtum_lib sign transaction in local, it will be implemented later, `token` is string for jingtum currency, the value is `swt` or `bwt`.
+`server` is string for jingtum websocket server url, `local_sign` checks if jcc_jingtum_lib sign transaction in local, `token` is string for jingtum blockchain or consortium blockchain, the value is `swt` or `bwt` that respectively represents [jingtum chain](http://state.jingtum.com/#!/) and [bizain chain](https://bizain.net/bc/explorer/#!/).
 
 ### connect(callback)
 
