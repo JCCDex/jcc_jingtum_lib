@@ -1,7 +1,9 @@
 # About JCC Jingtum lib
 
+![npm](https://img.shields.io/npm/v/jcc_jingtum_lib.svg)
 [![Build Status](https://travis-ci.com/JCCDex/jcc_jingtum_lib.svg?branch=master)](https://travis-ci.com/JCCDex/jcc_jingtum_lib)
 [![Coverage Status](https://coveralls.io/repos/github/JCCDex/jcc_jingtum_lib/badge.svg?branch=master)](https://coveralls.io/github/JCCDex/jcc_jingtum_lib?branch=master)
+[![npm downloads](https://img.shields.io/npm/dm/jcc_jingtum_lib.svg)](http://npm-stat.com/charts.html?package=jcc_jingtum_lib)
 
 Basic js lib to be used for interacting with jingtum blockchain or consortium blockchain network. Now support browser client.
 
