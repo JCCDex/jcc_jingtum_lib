@@ -21,20 +21,3 @@ npm install jcc_jingtum_lib
 ## Documents
 
 For more information see [docs.md](https://github.com/JCCDex/jcc_jingtum_lib/blob/master/docs.md)
-
-## About Test
-
-Because the test network of jingtum is not available, some test examples are based on production network. Please create config.js file in the test folder.
-
-- File Structure
-
-```javascript
-module.exports = {
-    "JT_NODE": "",
-    "TEST_NODE": "",
-    "testAddress": "",
-    "testSecret": "",
-    "testDestinationAddress": "",
-    "testCreateHash": ""
-}
-```
