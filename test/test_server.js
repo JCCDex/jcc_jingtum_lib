@@ -273,7 +273,7 @@ describe('test server', function () {
                     }
                     remote.disconnect();
                     done()
-                }, 5000)
+                }, 10000)
             })
         })
     })
