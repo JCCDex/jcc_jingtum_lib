@@ -61,6 +61,5 @@ typings/
 .next
 .DS_Store
 dist
-test/config.js
 .coveralls.yml
 libre

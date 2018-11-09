@@ -56,7 +56,7 @@
     "url": "git+https://github.com/JCCDex/jcc_jingtum_lib.git"
   },
   "scripts": {
-    "test": "gulp eslint",
+    "test": "gulp",
     "deploy": "./publish.sh",
     "coveralls": "cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
