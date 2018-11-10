@@ -267,6 +267,28 @@ describe('test remote', function () {
             });
         })
 
+        it('should request tx in error', function (done) {
+            this.timeout(0);
+            let remote = new Remote({
+                server: JT_NODE,
+                local_sign: true,
+                token: 'swt'
+            });
+            remote.connect((err, result) => {
+                let req = remote.requestTx({
+                    hash: '20753B803666F729F99B3F2E90AD4E9731572D773B0E3E0DEB733197196F4EB5'
+                });
+                expect(req._command).to.equal('tx');
+                req.submit((err, result) => {
+                    console.log('111111', err)
+                    expect(err).to.not.null;
+                    expect(result).to.equal(undefined)
+                    remote.disconnect();
+                    done()
+                })
+            });
+        })
+
         it('throw error if the options is not object', function (done) {
             this.timeout(0);
             let remote = new Remote({

@@ -113,7 +113,6 @@ Remote.prototype._handleMessage = function (e) {
         data = JSON.parse(e.data);
     } catch (e) {}
     if (typeof data !== 'object') return;
-
     switch (data.type) {
         case 'ledgerClosed':
             self._handleLedgerClosed(data);
@@ -204,11 +203,12 @@ Remote.prototype._handleResponse = function (data) {
     }
 
     // return to callback
+
     if (data.status === 'success') {
         var result = request.filter(data.result);
-        request.callback(null, result);
+        request && request.callback(null, result);
     } else if (data.status === 'error') {
-        request.callback(data.error_message || data.error_exception);
+        request && request.callback(data.error_exception || data.error_message);
     }
 };
 

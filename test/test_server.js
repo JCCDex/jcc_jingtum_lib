@@ -251,7 +251,7 @@ describe('test server', function () {
                 server: JT_NODE,
                 local_sign: true
             });
-            remote.connect(function (err, res) {
+            remote.connect((err, res) => {
                 let spy = sinon.spy(remote._server, '_setState');
                 let spy1 = sinon.spy(remote, 'emit');
                 remote._server._handleClose();
@@ -261,7 +261,7 @@ describe('test server', function () {
                 expect(remote._server._opened).to.equal(false);
                 let args = spy.args[0]
                 expect(args[0]).to.equal('offline');
-                setTimeout(function () {
+                setTimeout(() => {
                     // clearInterval(remote._server._timer)
                     expect(spy1.callCount).to.at.least(2);
                     expect(spy1.args[0][0]).to.equal('disconnect')
@@ -273,7 +273,7 @@ describe('test server', function () {
                     }
                     remote.disconnect();
                     done()
-                }, 10000)
+                }, 4000)
             })
         })
     })
