@@ -7,7 +7,7 @@
 
 Basic js lib to be used for interacting with jingtum blockchain or consortium blockchain network. Now support browser client.
 
-- Keep only one websocket connecttion to jingtum and handle exception
+- Keep only one websocket connection to jingtum and handle exception
 - Do transaction to jingtumd, and process response
 - Subscribe events, include server, ledger, account and so on
 - Get other information from jingtum

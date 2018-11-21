@@ -280,7 +280,6 @@ describe('test remote', function () {
                 });
                 expect(req._command).to.equal('tx');
                 req.submit((err, result) => {
-                    console.log('111111', err)
                     expect(err).to.not.null;
                     expect(result).to.equal(undefined)
                     remote.disconnect();
