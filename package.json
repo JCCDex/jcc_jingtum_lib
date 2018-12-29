@@ -30,14 +30,11 @@
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^3.1.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-babel": "^7.0.1",
     "gulp-eslint": "^5.0.0",
-    "gulp-istanbul": "^1.1.3",
-    "gulp-mocha": "^3.0.1",
-    "gulp-util": "^3.0.8",
-    "isparta": "^4.1.0",
     "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
     "sinon": "^6.3.4"
   },
   "directories": {
@@ -56,9 +53,9 @@
     "url": "git+https://github.com/JCCDex/jcc_jingtum_lib.git"
   },
   "scripts": {
-    "test": "gulp",
+    "test": "gulp && nyc --reporter=html --reporter=text mocha --reporter nyan test/test_*.js",
     "deploy": "./publish.sh",
-    "coveralls": "cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "version": "1.4.7",
   "author": "JCCDex",

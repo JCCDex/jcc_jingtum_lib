@@ -273,7 +273,8 @@ describe('test server', function () {
                     }
                     remote.disconnect();
                     done()
-                }, 4000)
+                }, 5000)
+
             })
         })
     })
@@ -307,7 +308,7 @@ describe('test server', function () {
             server.connect();
             expect(spy.callCount).to.equal(0)
             expect(spy1.callCount).to.equal(0)
-            server._ws.close();
+            server.disconnect();
         })
 
         it('throw error if create WS instance', function (done) {
