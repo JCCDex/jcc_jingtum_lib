@@ -57,7 +57,7 @@
     "deploy": "./publish.sh",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
-  "version": "1.4.7",
+  "version": "1.4.8",
   "author": "JCCDex",
   "bugs": {
     "url": "https://github.com/JCCDex/jcc_jingtum_lib/issues"
