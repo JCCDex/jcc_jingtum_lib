@@ -48,6 +48,12 @@ options for setup a remote, options including
 
 `server` is string for jingtum websocket server url, `local_sign` checks if jcc_jingtum_lib sign transaction in local, `token` is string for jingtum blockchain or consortium blockchain, the value is `swt` or `bwt` that respectively represents [jingtum chain](http://state.jingtum.com/#!/) and [bizain chain](https://bizain.net/bc/explorer/#!/).
 
+bwt是商链的原生币，也是燃料币，商链是井通链的联盟链，如果添加新的联盟链，需要在 [jcc_jingtum_base_lib](https://github.com/JCCDex/jcc_jingtum_base_lib)项目中src/wallet_config.js 添加新的联盟链定义即可，如果需要我们增加请联系我们。
+
+BWT is the native token and gas token of BIZAIN. BIZAIN is the alliance chain of jingtum. If you add a new alliance chain, you need to add a new definition of the alliance chain in project [jcc_jingtum_base_lib](https://github.com/JCCDex/jcc_jingtum_base_lib) folder src/wallet_config.js. 
+
+If you need to add it in this package, please contact us.
+
 ### connect(callback)
 
 Each remote object should connect jingtum first. Now jingtum should connect manual, only then you can send request to backend.
