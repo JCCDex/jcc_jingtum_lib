@@ -33,6 +33,31 @@ npm install jcc_jingtum_lib
 
 For more information see [docs.md](https://github.com/JCCDex/jcc_jingtum_lib/blob/master/docs.md)
 
+## About Sign
+
+```javascript
+// demo
+const LocalSign = require('jcc_jingtum_lib/src/local_sign');
+let tx = {
+  Flags: 0,
+  Fee: 0.00001,
+  Account: 'jpgWGpfHz8GxqUjz5nb6ej8eZJQtiF6KhH',
+  TransactionType: 'OfferCreate',
+  TakerGets: {
+    value: 0.03,
+    currency: 'CNY',
+    issuer: 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or'
+  },
+  TakerPays: 1
+}
+let seed = {
+  seed: "snfXQMEVbbZng84CcfdKDASFRi4Hf"
+}
+let signature = LocalSign(tx, seed);
+```
+
+For more structure of transaction data, see [jcc_exchange](https://github.com/JCCDex/jcc_exchange/blob/master/src/tx.js);
+
 ## Clone from github
 
 ```shell

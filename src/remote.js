@@ -53,7 +53,7 @@ function Remote(options) {
         maxAge: 1000 * 60 * 5
     }); // 2100 size, 5 min
 
-    self.on('newListener', function (type, listener) {
+    self.on('newListener', function (type) {
         if (!self._server.isConnected()) return;
         if (type === 'removeListener') return;
         if (type === 'transactions') {
@@ -111,7 +111,9 @@ Remote.prototype._handleMessage = function (e) {
     var data;
     try {
         data = JSON.parse(e.data);
-    } catch (e) {}
+    } catch (e) {
+        data = "";
+    }
     if (typeof data !== 'object') return;
     switch (data.type) {
         case 'ledgerClosed':
@@ -408,7 +410,7 @@ function getRelationType(type) {
  * @returns {Request}
  * @private
  */
-Remote.prototype.__requestAccount = function (type, options, request, filter) {
+Remote.prototype.__requestAccount = function (type, options, request) {
     // var request = new Request(this, type, filter);
     request._command = type;
     var self = this
@@ -1127,7 +1129,7 @@ Remote.prototype.__buildDelegateKeySet = function (options, tx) {
     return tx;
 };
 
-Remote.prototype.__buildSignerSet = function (options, tx) {
+Remote.prototype.__buildSignerSet = function () {
     // TODO
     return null;
 };
