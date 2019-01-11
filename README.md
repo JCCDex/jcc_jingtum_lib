@@ -56,7 +56,7 @@ let seed = {
 let signature = LocalSign(tx, seed);
 ```
 
-For more structure of transaction data, see [jcc_exchange](https://github.com/JCCDex/jcc_exchange/blob/master/src/tx.js);
+For more structure of transaction data, see [jcc_exchange](https://github.com/JCCDex/jcc_exchange/blob/master/src/tx.js).
 
 ## Clone from github
 
