@@ -4,6 +4,7 @@ module.exports = {
     root: true,
     parser: 'babel-eslint',
     parserOptions: {
+        ecmaVersion: 6,
         sourceType: 'module'
     },
     env: {
@@ -11,7 +12,7 @@ module.exports = {
         node: true
     },
     // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
-    extends: 'standard',
+    extends: 'eslint:recommended',
     'rules': {
         'standard/no-callback-literal': [0, ["cb", "callback"]],
         'space-before-function-paren': 0,

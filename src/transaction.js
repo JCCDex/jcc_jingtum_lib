@@ -4,7 +4,7 @@ var Event = require('events').EventEmitter;
 var utf8 = require('utf8');
 var utils = require('./utils');
 var Wallet = require('jcc_jingtum_base_lib').Wallet;
-var jser = require('../lib/Serializer').Serializer;
+var sign = require('./local_sign');
 /**
  * Post request to server with account secret
  * @param remote
@@ -295,12 +295,10 @@ function signing(self, callback) {
         self.tx_json.TakerGets = Number(self.tx_json.TakerGets) / 1000000;
     }
     try {
-        var wt = new Wallet(self._secret, self._token);
-        self.tx_json.SigningPubKey = wt.getPublicKey();
-        var prefix = 0x53545800;
-        var hash = jser.from_json(self.tx_json, self._token).hash(prefix, self._token);
-        self.tx_json.TxnSignature = wt.signTx(hash);
-        self.tx_json.blob = jser.from_json(self.tx_json, self._token).to_hex();
+        var seed = {
+            seed: self._secret
+        }
+        self.tx_json.blob = sign(self.tx_json, seed, self._token);
         self._local_sign = true;
         callback(null, self.tx_json.blob);
     } catch (e) {
@@ -312,7 +310,6 @@ Transaction.prototype.sign = function (callback) {
     var self = this;
     if (self.tx_json.Sequence) {
         signing(self, callback);
-        // callback(null, signing(self));
     } else {
         var req = this._remote.requestAccountInfo({
             account: self.tx_json.Account,
@@ -322,7 +319,6 @@ Transaction.prototype.sign = function (callback) {
             if (err) return callback(err);
             self.tx_json.Sequence = data.account_data.Sequence;
             signing(self, callback);
-            // callback(null, signing(self));
         });
     }
 };
@@ -346,7 +342,7 @@ Transaction.prototype.submit = function (callback) {
         };
         self._remote._submit('submit', data, self._filter, callback);
     } else if (self._remote._local_sign) { // 签名之后传给底层
-        self.sign(function (err, blob) {
+        self.sign(function (err) {
             if (err) {
                 return callback('sign error: ' + err);
             } else {

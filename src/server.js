@@ -116,7 +116,7 @@ Server.prototype._handleClose = function () {
     if (self._timer !== 0) return;
     self._remote.emit('disconnect');
     self._timer = setInterval(function () {
-        self.connect(function (err, ret) {
+        self.connect(function (err) {
             if (!err) {
                 clearInterval(self._timer);
                 self._timer = 0;
