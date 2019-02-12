@@ -46,7 +46,7 @@ options for setup a remote, options including
 }
 ```
 
-`server` is string for jingtum websocket server url, `local_sign` checks if jcc_jingtum_lib sign transaction in local, `token` is string for jingtum blockchain or consortium blockchain, the value is `swt` or `bwt` that respectively represents [jingtum chain](http://state.jingtum.com/#!/) and [bizain chain](https://bizain.net/bc/explorer/#!/).
+`server` is string for jingtum websocket server url, `local_sign` checks if jcc_jingtum_lib sign transaction in local, `token` is string for jingtum or jingtum alliance chains, the value is `swt` or `bwt` that respectively represents [jingtum chain](http://state.jingtum.com/#!/) and [bizain chain](https://bizain.net/bc/explorer/#!/).
 
 bwt是商链的原生币，也是燃料币，商链是井通链的联盟链，如果添加新的联盟链，需要在 [jcc_jingtum_base_lib](https://github.com/JCCDex/jcc_jingtum_base_lib)项目中src/wallet_config.js 添加新的联盟链定义即可，如果需要我们增加请联系我们。
 
