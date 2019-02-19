@@ -4,10 +4,10 @@
     "bn-plus.js": "^1.0.0",
     "extend": "^3.0.0",
     "isomorphic-ws": "^4.0.1",
-    "jcc_jingtum_base_lib": "^1.0.9",
+    "jcc_jingtum_base_lib": "^1.1.1",
     "jsbn": "^1.1.0",
     "lodash": "^4.17.2",
-    "lru-cache": "^4.0.1",
+    "lru-cache": "^4.1.5",
     "sha1": "^1.1.1",
     "url": "^0.11.0",
     "utf8": "^2.1.2",
@@ -16,26 +16,26 @@
   "deprecated": false,
   "description": "jingtum lib",
   "devDependencies": {
-    "ajv": "^6.5.3",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
+    "@babel/core": "^7.3.3",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.3.1",
+    "ajv": "^6.9.1",
     "babel-eslint": "^8.2.6",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
-    "chai": "^4.1.2",
+    "babel-runtime": "^6.26.0",
+    "chai": "^4.2.0",
     "chai-json-schema": "^1.5.0",
     "coveralls": "^3.0.2",
     "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^3.1.0",
     "gulp": "^4.0.0",
-    "gulp-babel": "^7.0.1",
+    "gulp-babel": "^8.0.0",
     "gulp-eslint": "^5.0.0",
     "mocha": "^5.2.0",
-    "nyc": "^13.1.0",
-    "sinon": "^6.3.4"
+    "nyc": "^13.3.0",
+    "sinon": "^6.3.5"
   },
   "directories": {
     "lib": "lib"
@@ -57,7 +57,7 @@
     "deploy": "./publish.sh",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
-  "version": "1.4.8",
+  "version": "1.4.9",
   "author": "JCCDex",
   "bugs": {
     "url": "https://github.com/JCCDex/jcc_jingtum_lib/issues"
