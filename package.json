@@ -16,25 +16,26 @@
   "deprecated": false,
   "description": "jingtum lib",
   "devDependencies": {
-    "@babel/core": "^7.3.3",
-    "@babel/plugin-transform-runtime": "^7.2.0",
-    "@babel/preset-env": "^7.3.1",
-    "ajv": "^6.9.1",
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "ajv": "^6.10.0",
     "babel-eslint": "^8.2.6",
     "babel-runtime": "^6.26.0",
     "chai": "^4.2.0",
-    "chai-json-schema": "^1.5.0",
-    "coveralls": "^3.0.2",
+    "chai-json-schema": "^1.5.1",
+    "coveralls": "^3.0.4",
     "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^4.0.0",
+    "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^3.1.0",
-    "gulp": "^4.0.0",
+    "fsevents": "^2.0.7",
+    "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-eslint": "^5.0.0",
     "mocha": "^5.2.0",
-    "nyc": "^13.3.0",
+    "nyc": "^14.1.1",
     "sinon": "^6.3.5"
   },
   "directories": {
@@ -53,9 +54,9 @@
     "url": "git+https://github.com/JCCDex/jcc_jingtum_lib.git"
   },
   "scripts": {
-    "test": "gulp && nyc --reporter=html --reporter=text mocha test/test_*.js",
+    "test": "gulp && nyc --reporter=html --reporter=text mocha test/*.spec.js",
     "deploy": "./publish.sh",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "version": "1.4.9",
   "author": "JCCDex",

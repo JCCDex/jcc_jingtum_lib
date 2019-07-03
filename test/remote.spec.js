@@ -973,7 +973,7 @@ describe('test remote', function () {
             remote.connect((err, result) => {
                 let req = remote.requestPathFind({
                     account: testAddress,
-                    destination: testDestinationAddress,
+                    destination: "jGynK3VKtvvyr2m81mvnj5DXLJtKAc4CHy",
                     amount: {
                         value: "0.001",
                         currency: "SWT",
@@ -984,7 +984,7 @@ describe('test remote', function () {
                 expect(req.message).to.deep.equal({
                     subcommand: 'create',
                     source_account: testAddress,
-                    destination_account: testDestinationAddress,
+                    destination_account: "jGynK3VKtvvyr2m81mvnj5DXLJtKAc4CHy",
                     destination_amount: '1000'
                 })
                 req.submit((err, result) => {
