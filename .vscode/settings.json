@@ -1,0 +1,27 @@
+{
+    "extensions.ignoreRecommendations": false,
+    "git.ignoreMissingGitWarning": true,
+    "vetur.format.defaultFormatter.html": "js-beautify-html",
+    "editor.formatOnSave": true,
+    "javascript.suggestionActions.enabled": false,
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "typescript.suggestionActions.enabled": false,
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "search.exclude": {
+        "**/node_modules": false
+    },
+    "python.jediEnabled": false,
+    "explorer.confirmDelete": false,
+    "beautify.config": {
+        "indent_size": 2,
+        "indent_char": " ",
+        "brace_style": "collapse,preserve-inline"
+    }
+}
