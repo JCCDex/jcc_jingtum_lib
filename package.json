@@ -11,7 +11,7 @@
     "sha1": "^1.1.1",
     "url": "^0.11.0",
     "utf8": "^2.1.2",
-    "ws": "^1.1.1"
+    "ws": "^7.0.1"
   },
   "deprecated": false,
   "description": "jingtum lib",

@@ -305,7 +305,12 @@ describe('test server', function() {
       server.connect();
       expect(spy.callCount).to.equal(0)
       expect(spy1.callCount).to.equal(0)
-      server.disconnect();
+
+      try {
+        server.disconnect();
+      } catch (error) {
+
+      }
     })
 
     it('throw error if create WS instance', function(done) {
