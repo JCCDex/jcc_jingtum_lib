@@ -6,7 +6,7 @@
     "isomorphic-ws": "^4.0.1",
     "jcc_jingtum_base_lib": "^1.1.1",
     "jsbn": "^1.1.0",
-    "lodash": "^4.17.2",
+    "lodash": "^4.17.15",
     "lru-cache": "^4.1.5",
     "sha1": "^1.1.1",
     "url": "^0.11.0",

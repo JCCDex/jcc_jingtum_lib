@@ -68,4 +68,5 @@ npm run test
 ```
 
 You will see this image, enjoy it.
+
 ![Test Screenshot](screenshot.png)
