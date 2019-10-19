@@ -91,6 +91,7 @@ describe('test remote', function () {
                 expect(remote.isConnected()).to.equal(true);
                 expect(req._command).to.equal('server_info');
                 req.submit((err, result) => {
+                    console.log(result);
                     expect(result).to.be.jsonSchema(schema.SERVER_INFO_SCHEMA)
                     remote.disconnect();
                     done()
