@@ -4,7 +4,7 @@
     "bn-plus.js": "^1.0.0",
     "extend": "^3.0.0",
     "isomorphic-ws": "^4.0.1",
-    "jcc_jingtum_base_lib": "^1.1.1",
+    "jcc_jingtum_base_lib": "^1.1.2",
     "jsbn": "^1.1.0",
     "lodash": "^4.17.15",
     "lru-cache": "^4.1.5",
