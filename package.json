@@ -57,7 +57,7 @@
     "deploy": "./publish.sh",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
-  "version": "1.5.1",
+  "version": "1.5.2",
   "author": "JCCDex",
   "bugs": {
     "url": "https://github.com/JCCDex/jcc_jingtum_lib/issues"
